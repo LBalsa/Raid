@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8d45f3499b5e3b249a5649311e898e8e
+timeCreated: 1522268921
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - fX: {fileID: 11400000, guid: 591212ab69e422744a85675cdada2aa9, type: 2}
+  - lootTable: {fileID: 11400000, guid: 05df826fd4ab50f4cae9cdf6e87640f9, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

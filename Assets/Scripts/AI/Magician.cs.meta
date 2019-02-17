@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: 333f4155d3c869845ad3a9f24b0166cc
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - callOut: {instanceID: 0}
+  - canvasDialogue: {instanceID: 0}
+  - canvasOption1: {instanceID: 0}
+  - canvasOption2: {instanceID: 0}
+  - canvas1question: {instanceID: 0}
+  - canvas2upgrade: {instanceID: 0}
+  - canvas3fire: {instanceID: 0}
+  - canvas4freeze: {instanceID: 0}
+  - icon: {instanceID: 0}
+  - vfx_fire_attack: {fileID: 100004, guid: 1c20c7996d683754db1f0f62a361952c, type: 2}
+  - vfx_fire_upgrade: {instanceID: 0}
+  - vfx_ice_attack: {fileID: 100000, guid: aa3fed151f536ee49b583c6a3ac4a2e1, type: 2}
+  - vfx_ice_upgrade: {fileID: 1321998285964692, guid: 997af955abec3d74f88038f75b4e78d4,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

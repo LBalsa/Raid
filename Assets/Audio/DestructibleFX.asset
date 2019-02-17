@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed1aab3cb92c9b5459ad7bd6eb5e2fdc, type: 3}
+  m_Name: DestructibleFX
+  m_EditorClassIdentifier: 
+  sfx_hit: {fileID: 11400000, guid: 87aa4cc05b225f141a07c3b4565d9ab8, type: 2}
+  sfx_destroy: {fileID: 11400000, guid: 540bbfe4002daf743ad71d952ae94157, type: 2}
+  vfx_hit: {fileID: 1462327970484030, guid: f01c1eba69de19e44b04d8d651aaac37, type: 2}
+  vfx_destroy: {fileID: 1794489668570870, guid: 7e6c35233715e12489b624cbeb774ae2,
+    type: 2}

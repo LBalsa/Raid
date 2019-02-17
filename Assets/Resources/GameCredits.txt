@@ -1,0 +1,66 @@
+using UnityEngine;
+using UnityEditor;
+using System.IO;
+
+public class LoadTextFile
+{
+    static void WriteString()
+    {
+		string line;  
+        StreamReader credits = new StreamReader("Assets/Resources/GameCredits.txt");
+		while((line = file.ReadLine()) != null) 
+		{
+			System.Console.WriteLine(line);  
+		
+
+			// Lead Designer & Programmer //
+
+			Luis Balsa
+
+
+			// Animations //
+
+			FG3D;
+			Mixamo;
+
+
+			// 3D Models //
+
+			Animal Pack Deluxe | Janpec;
+			Delicious Food | Mafubash;
+			Free Trees | Darth Artisan;
+			Enemy Characters | Honeti;
+			Main Chharacter | Mika Hinas;
+			Weapons | Other art guy;
+			Houses | Mika Hinas;
+			Boats | Mika Hinas;
+			Mega Fantasy Props Pack | Karboosx;
+
+
+			// Sound //
+
+			Victory Music | Bensound;
+			Sound effects | SoundBible;
+
+			// Visual Special Effects //
+
+			Cartoon FX | Jean Moreno;
+			Toony Colours | Jean Moreno;
+
+			// Special Thanks //
+
+			/* Altough this is largely my project now, I cannot forget to mention my precious colleagues that helped me develop the initial game at university. */
+
+			// Asad Khan | Programmer
+			/* Initial character development, worked long hours on an analogue controlled combat system that was too complex to fit in the game. A good friend.*/
+			// Mika Hinas | Artist
+			/* A good companion, modeled the lovely pirate that unfortunately glitched out a bit and ended up with elf ears, the houses and some other stuff. He also helped with the initial game idea */
+			//Tess Carter | Programmer
+			/* Helped with level design,menus, the shop and weapon effects stuff. Took my Tess-co jokes with a smile every single day. */
+			// "The other artist"
+			/* Honestly don't remember his name, but I don't think he remembers mine either. He did do a great job on designing those boats and weapons though.*/
+		}
+
+		file.Close();  
+	}
+}

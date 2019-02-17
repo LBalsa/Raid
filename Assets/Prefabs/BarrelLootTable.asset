@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8fd0fa5bf697ab429f0cd8c3b922cd4, type: 3}
+  m_Name: BarrelLootTable
+  m_EditorClassIdentifier: 
+  lootItems:
+  - name: Fish
+    gameObject: {fileID: 1141414037531574, guid: 764c3affe01df0d46a7a72b6540d3092,
+      type: 2}
+    dropWeight: 80
+    dropPercent: 41.025642
+    probabilityRangeFrom: 0
+    probabilityRangeTo: 80
+  - name: Apple
+    gameObject: {fileID: 100000, guid: dfdce943934caf049878a281a7adb822, type: 2}
+    dropWeight: 70
+    dropPercent: 35.897434
+    probabilityRangeFrom: 80
+    probabilityRangeTo: 150
+  - name: Gold Coin
+    gameObject: {fileID: 0}
+    dropWeight: 15
+    dropPercent: 7.6923075
+    probabilityRangeFrom: 150
+    probabilityRangeTo: 165
+  - name: Silver Coin
+    gameObject: {fileID: 0}
+    dropWeight: 30
+    dropPercent: 15.384615
+    probabilityRangeFrom: 165
+    probabilityRangeTo: 195
+  - name: 
+    gameObject: {fileID: 0}
+    dropWeight: 0
+    dropPercent: 0
+    probabilityRangeFrom: 195
+    probabilityRangeTo: 195
+  totalDropWeight: 195
