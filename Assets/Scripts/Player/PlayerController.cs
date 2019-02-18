@@ -331,6 +331,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Blocking
+    if (stteinfo.fullPathHash== state_combat)
+    {
+        if ((Input.GetButton("R1")) || (Input.GetKey(KeyCode.Q)))
+        {
+            Attacking = true; // Enemy block purposes.
+            anim.SetTrigger("HeavyAttacks");
+            Invoke("ResetTriggers", 0.01f);
+        }
+    }
+
+
     private void JumpUpdate()
     {
         // Jump.
