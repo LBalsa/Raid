@@ -1,9 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-
-public class WeaponUpgradeGroup : ScriptableObject
+namespace Weapons
 {
-    public WeaponUpgrade[] Upgrades;
+    namespace WeaponUpgrades
+    {
+        [CreateAssetMenu(menuName = "WeaponUpgrade/Group")]
+        public class WeaponUpgradeGroup : ScriptableObject
+        {
+            public WeaponUpgrade[] Upgrades;
+        }
+    }
 }

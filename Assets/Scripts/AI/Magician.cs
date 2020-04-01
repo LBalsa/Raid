@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Weapons.WeaponUpgrades;
 
 [SelectionBase]
 public class Magician : MonoBehaviour
 {
     private bool triggered = false;
     private bool open = false;
-    public WeaponUpgrade weaponUpgrade;
+    public WeaponUpgradeGroup weaponUpgradeGroup;
+    private IWeaponUpgrade weaponUpgrade;
 
     // Canvas objects.
     [Header("Canvas")]
@@ -19,9 +21,6 @@ public class Magician : MonoBehaviour
 
     // Key prompt.
     public GameObject keyPrompt;
-
-    // Types of upgrades available to the weapons.
-    private WeaponUpgrade.UpgradeType chosenTypeUpgrade = WeaponUpgrade.UpgradeType.none;
 
     // Current state of the dialogue.
     private enum DialogueState { callout, greeting, denial, upgradeChoice, fireUp, iceUp, confirm };
@@ -75,8 +74,8 @@ public class Magician : MonoBehaviour
                 else if (option == 1) { Close(); }
                 break;
             case DialogueState.upgradeChoice:
-                if (option == 0) { chosenTypeUpgrade = WeaponUpgrade.UpgradeType.fire; UpdateDialogueBox(fireUp); }
-                else if (option == 1) { chosenTypeUpgrade = WeaponUpgrade.UpgradeType.ice; UpdateDialogueBox(iceUp); }
+                if (option == 0) { weaponUpgrade = weaponUpgradeGroup.Upgrades[option]; UpdateDialogueBox(fireUp); }
+                else if (option == 1) { weaponUpgrade = weaponUpgradeGroup.Upgrades[option]; UpdateDialogueBox(iceUp); }
                 else if (option == 2) { Close(); break; }
                 ds = DialogueState.confirm;
                 break;
@@ -126,9 +125,8 @@ public class Magician : MonoBehaviour
 
     private void Confirm()
     {
-        PlayerController.inst.mainWeapon.Upgrade(weaponUpgrade, chosenTypeUpgrade);
+        PlayerController.inst.mainWeapon.Upgrade(weaponUpgrade);
         Close();
-
     }
 
     private void Update()

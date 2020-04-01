@@ -1,119 +1,91 @@
 ﻿using UnityEngine;
 
-[SelectionBase]
-public class MainWeapon : Weapon
+namespace Weapons
 {
-    public WeaponUpgrade weaponUpgradeReference;
-    public WeaponUpgrade.UpgradeType upgradeType = WeaponUpgrade.UpgradeType.none;
-    public GameObject passiveEffectReference;
-
-    public void Pickup(Transform parentHand, bool isPlayerFriendly, float dmg)
+    [SelectionBase]
+    public class MainWeapon : Weapon
     {
-        // Disable trigger.
-        GetComponent<SphereCollider>().enabled = false;
+        public IWeaponUpgrade weaponUpgradeReference;
+        public GameObject passiveEffectReference;
 
-        // Setup.
-        SetUp(isPlayerFriendly, false, dmg);
-
-        // Set parent and position.
-        pos = new Vector3(0, 0, 0);
-        rotation = new Vector3(0, 0, 0);
-
-        transform.parent = parentHand;
-        transform.localPosition = pos;
-        transform.localEulerAngles = rotation;
-    }
-
-    public void Drop()
-    {
-        // Set as universal weapon.
-        armed = false;
-        SetLayer(Layers.Weapon);
-
-        // Enable collider.
-        Enable();
-
-        // Free rigidbody.
-        rb.useGravity = true;
-        rb.constraints = RigidbodyConstraints.None;
-
-        // Remove parent.
-        transform.parent = null;
-
-        // Activate trigger.
-        SphereCollider sc = GetComponent<SphereCollider>();
-        sc.enabled = true;
-        sc.isTrigger = true;
-
-
-        pos = transform.position;
-        rotation = transform.eulerAngles;
-    }
-
-    protected override void ApplyDamage(Collision collision)
-    {
-        // Apply damage.
-        base.ApplyDamage(collision);
-
-        // Upgrade effects.
-        if (weaponUpgradeReference && upgradeType != WeaponUpgrade.UpgradeType.none)
+        public void Pickup(Transform parentHand, bool isPlayerFriendly, float dmg)
         {
-            // Visual effects.
-            Instantiate(weaponUpgradeReference.GetActiveEffect(upgradeType), collision.contacts[0].point, Quaternion.identity);
-            // Extra effects.
-            weaponUpgradeReference.ApplyActiveEffect(this, upgradeType, collision.gameObject.GetComponent<IDestructable>());
+            // Disable trigger.
+            GetComponent<SphereCollider>().enabled = false;
+
+            // Setup.
+            SetUp(isPlayerFriendly, false, dmg);
+
+            // Set parent and position.
+            pos = new Vector3(0, 0, 0);
+            rotation = new Vector3(0, 0, 0);
+
+            transform.parent = parentHand;
+            transform.localPosition = pos;
+            transform.localEulerAngles = rotation;
         }
 
-        if (throwable)
+        public void Drop()
         {
-            Destroy(this.gameObject);
+            // Set as universal weapon.
+            armed = false;
+            SetLayer(Layers.Weapon);
+
+            // Enable collider.
+            Enable();
+
+            // Free rigidbody.
+            rb.useGravity = true;
+            rb.constraints = RigidbodyConstraints.None;
+
+            // Remove parent.
+            transform.parent = null;
+
+            // Activate trigger.
+            SphereCollider sc = GetComponent<SphereCollider>();
+            sc.enabled = true;
+            sc.isTrigger = true;
+
+            // Save position
+            pos = transform.position;
+            rotation = transform.eulerAngles;
         }
-    }
 
-    public void FireDamage()
-    {
-
-    }
-
-    public void Upgrade(WeaponUpgrade upgrade, WeaponUpgrade.UpgradeType type)
-    {
-        // Check if upgrade reference is null.
-        if (upgrade)
+        protected override void ApplyDamage(Collision collision)
         {
-            weaponUpgradeReference = upgrade;
-            if (upgradeType != WeaponUpgrade.UpgradeType.none)
+            // Apply damage.
+            base.ApplyDamage(collision);
+
+            // Apply upgrade effects.
+            if (weaponUpgradeReference != null)
             {
-                // Remove former passive effect and vfx.
-                weaponUpgradeReference.RemovePassiveEffect(this, upgradeType);
+                Instantiate(weaponUpgradeReference.ActiveVfx, collision.contacts[0].point, Quaternion.identity);
+                weaponUpgradeReference.ApplyActiveEffect(this, collision.gameObject.GetComponent<IDestructable>());
+            }
+
+            if (throwable)
+            {
+                Destroy(this.gameObject);
+            }
+        }
+
+
+        public void Upgrade(IWeaponUpgrade upgrade)
+        {
+            // Remove former upgrade and vfx.
+            if (weaponUpgradeReference != null)
+            {
+                weaponUpgradeReference.RemovePassiveEffect(this);
                 Destroy(passiveEffectReference);
             }
 
-            // If there is an upgrade type, apply it.
-            if (type != WeaponUpgrade.UpgradeType.none)
-            {
-                upgradeType = type;
+            // Save and apply new upgrade
+            weaponUpgradeReference = upgrade;
+            weaponUpgradeReference.ApplyPassiveEffect(this);
 
-                // Passive effect.
-                weaponUpgradeReference.ApplyPassiveEffect(this, upgradeType);
-
-                // Passive vfx around weapon.
-                passiveEffectReference = Instantiate(upgrade.GetPassiveEffect(upgradeType), transform.position, Quaternion.identity, transform);
-                passiveEffectReference.transform.localRotation = Quaternion.Euler(90, 0, 0);
-            }
+            // Passive vfx around weapon.
+            passiveEffectReference = Instantiate(upgrade.PassiveVfx, transform.position, Quaternion.identity, transform);
+            passiveEffectReference.transform.localRotation = Quaternion.Euler(90, 0, 0);
         }
     }
-
-    //public void Upgrade(UpgradeType upgradeType, GameObject attackEffect, GameObject passiveEffect)
-    //{
-    //    if (upgrade == UpgradeType.none)
-    //    {
-    //        upgrade = upgradeType;
-    //        vfx_passive = passiveEffect;
-    //        vfx_attack = attackEffect;
-    //        damage *= 2;
-    //        GameObject go = Instantiate(passiveEffect, transform.position, Quaternion.identity, transform);
-    //        go.transform.localRotation = Quaternion.Euler(90, 0, 0);
-    //    }
-    //}
-
 }
