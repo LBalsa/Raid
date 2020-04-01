@@ -3,6 +3,8 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [SelectionBase]
+
+// The weapon class is to be used for body parts
 public class Weapon : MonoBehaviour
 {
     protected bool throwable = false;
@@ -18,23 +20,17 @@ public class Weapon : MonoBehaviour
     protected Vector3 pos = new Vector3(0, 0, 0);
     protected Vector3 rotation = new Vector3(0, 0, 0);
     protected List< GameObject> gameObjectsHit = new List<GameObject>();
+
+    // weapon layers
+    public enum Layers { Weapon = 0, PlayerWeapon = 9, EnemyWeapon = 10};
+
     // Colliders.
     protected SphereCollider pickupTrigger;
     protected List<Collider> colliders = new List<Collider>();
-
+    
     public void SetUp(bool isPlayerFriendly, bool isThrowable, float dmg)
     {
-        // Set layer for collision.
-        if (isPlayerFriendly)
-        {
-            tag = "PlayerWeapon";
-            SetLayer(9);
-        }
-        else
-        {
-            tag = "EnemyWeapon";
-            SetLayer(10);
-        }
+        SetLayer(isPlayerFriendly ? Layers.PlayerWeapon : Layers.EnemyWeapon);
 
         throwable = isThrowable;
 
@@ -42,7 +38,7 @@ public class Weapon : MonoBehaviour
         damage = baseDamage + dmg;
         armed = true;
 
-        // Get colliders and disable colliders.
+        // Get and disable colliders.
         foreach (Collider coll in GetComponentsInChildren<Collider>())
         {
             if (!coll.isTrigger)
@@ -109,34 +105,41 @@ public class Weapon : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (CanApplyDamage(collision)) ApplyDamage(collision);
+    }
+
+    protected bool CanApplyDamage(Collision collision)
+    {
         if (collision.gameObject.GetComponent<IDestructable>() != null && armed)
         {
-            // Prevent double damage.
+            // Prevent double damage by caching already hit objects.
             foreach (var item in gameObjectsHit)
             {
                 if (collision.gameObject == item)
-                {
-                    return;
-                }
+                    return false;
             }
             gameObjectsHit.Add(collision.gameObject);
-
-            collision.gameObject.GetComponent<IDestructable>().TakeDamage(damage, collision);
-
+            return true;
         }
+        else return false;
     }
 
-
-    public void SetLayer(int layer, bool includeChildren = true)
+    protected virtual void ApplyDamage(Collision collision)
     {
-        gameObject.layer = layer;
+        collision.gameObject.GetComponent<IDestructable>().TakeDamage(damage, collision);
+    }
+
+    public void SetLayer(Layers layer, bool includeChildren = true)
+    {
+        gameObject.layer = (int)layer;
         if (includeChildren)
         {
             foreach (Transform trans in gameObject.transform.GetComponentsInChildren<Transform>(true))
             {
-                trans.gameObject.layer = layer;
+                trans.gameObject.layer = (int)layer;
             }
         }
+        tag = layer.ToString();
     }
 
 

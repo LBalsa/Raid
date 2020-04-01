@@ -28,8 +28,7 @@ public class MainWeapon : Weapon
     {
         // Set as universal weapon.
         armed = false;
-        SetLayer(0);
-        tag = "Weapon";
+        SetLayer(Layers.Weapon);
 
         // Enable collider.
         Enable();
@@ -49,39 +48,25 @@ public class MainWeapon : Weapon
 
         pos = transform.position;
         rotation = transform.eulerAngles;
-
     }
 
-    private void OnCollisionEnter(Collision collision)
+    protected override void ApplyDamage(Collision collision)
     {
-        if (collision.gameObject.GetComponent<IDestructable>() != null && armed)
+        // Apply damage.
+        base.ApplyDamage(collision);
+
+        // Upgrade effects.
+        if (weaponUpgradeReference && upgradeType != WeaponUpgrade.UpgradeType.none)
         {
-            // Prevent double damage.
-            foreach (var hit in gameObjectsHit)
-            {
-                if (collision.gameObject == hit)
-                {
-                    return;
-                }
-            }
-            gameObjectsHit.Add(collision.gameObject);
+            // Visual effects.
+            Instantiate(weaponUpgradeReference.GetActiveEffect(upgradeType), collision.contacts[0].point, Quaternion.identity);
+            // Extra effects.
+            weaponUpgradeReference.ApplyActiveEffect(this, upgradeType, collision.gameObject.GetComponent<IDestructable>());
+        }
 
-            // Apply damage.
-            collision.gameObject.GetComponent<IDestructable>().TakeDamage(damage, collision);
-
-            // Upgrade effects.
-            if (weaponUpgradeReference && upgradeType != WeaponUpgrade.UpgradeType.none)
-            {
-                // Visual effects.
-                Instantiate(weaponUpgradeReference.GetActiveEffect(upgradeType), collision.contacts[0].point, Quaternion.identity);
-                // Extra effects.
-                weaponUpgradeReference.ApplyActiveEffect(this, upgradeType, collision.gameObject.GetComponent<IDestructable>());
-            }
-
-            if (throwable)
-            {
-                Destroy(this.gameObject);
-            }
+        if (throwable)
+        {
+            Destroy(this.gameObject);
         }
     }
 
@@ -90,12 +75,12 @@ public class MainWeapon : Weapon
 
     }
 
-    public void Upgrade(WeaponUpgrade upgradeReference, WeaponUpgrade.UpgradeType type)
+    public void Upgrade(WeaponUpgrade upgrade, WeaponUpgrade.UpgradeType type)
     {
         // Check if upgrade reference is null.
-        if (upgradeReference)
+        if (upgrade)
         {
-            weaponUpgradeReference = upgradeReference;
+            weaponUpgradeReference = upgrade;
             if (upgradeType != WeaponUpgrade.UpgradeType.none)
             {
                 // Remove former passive effect and vfx.
@@ -112,7 +97,7 @@ public class MainWeapon : Weapon
                 weaponUpgradeReference.ApplyPassiveEffect(this, upgradeType);
 
                 // Passive vfx around weapon.
-                passiveEffectReference = Instantiate(upgradeReference.GetPassiveEffect(upgradeType), transform.position, Quaternion.identity, transform);
+                passiveEffectReference = Instantiate(upgrade.GetPassiveEffect(upgradeType), transform.position, Quaternion.identity, transform);
                 passiveEffectReference.transform.localRotation = Quaternion.Euler(90, 0, 0);
             }
         }
