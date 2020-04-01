@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using Weapons;
 
 [SelectionBase]
 public class PlayerController : MonoBehaviour
