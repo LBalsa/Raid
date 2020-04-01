@@ -22,11 +22,11 @@ public class RangedEnemy : Enemy
         axe.SetActive(false);
         // Instantiate & setup throwing axe.
         GameObject b = Instantiate(throwingWeapon, enemyArm.transform.position,enemyArm.transform.rotation);
-        b.GetComponent<Weapon>().SetUp(false, true, damage);
+        b.GetComponent<MainWeapon>().SetUp(false, true, damage);
         //b.GetComponent<Rigidbody>().AddForce((target.transform.position - enemyArm.transform.position) * projSpeed);
 
         b.GetComponent<Rigidbody>().AddTorque(b.transform.forward * -500);
-        b.GetComponent<Weapon>().Throw();
+        b.GetComponent<MainWeapon>().Throw();
 
         // Calculate distance between target and source.
         Vector3 target = PlayerController.inst.transform.position;

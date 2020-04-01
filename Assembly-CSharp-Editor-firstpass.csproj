@@ -60,7 +60,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Plugins\GitHub\Editor\UnityAPIWrapper.cs" />
     <Compile Include="Assets\Standard Assets\Editor\CrossPlatformInput\CrossPlatformInputInitialize.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/soni_/Documents/Unity Projects/Raid/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
@@ -322,9 +321,6 @@
     </Reference>
     <Reference Include="JMOAssets_MatCapWelcome">
       <HintPath>C:/Users/soni_/Documents/Unity Projects/Raid/Assets/3rd Party/JMO Assets/Editor/JMOAssets_MatCapWelcome.dll</HintPath>
-    </Reference>
-    <Reference Include="sfw.net">
-      <HintPath>C:/Users/soni_/Documents/Unity Projects/Raid/Assets/Plugins/GitHub/Editor/sfw.net.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.Advertisements">
       <HintPath>C:/Users/soni_/Documents/Unity Projects/Raid/Library/PackageCache/com.unity.ads@2.3.1/Editor/UnityEditor.Advertisements.dll</HintPath>

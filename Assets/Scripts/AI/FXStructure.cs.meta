@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 818d1dd8ecf9f8a4aa9d5157947cb6e1
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - sfx_attack: {fileID: 11400000, guid: c312fab4e1e67c547a1463174cd0d392, type: 2}
+  - sfx_hurt: {fileID: 11400000, guid: 638cf4558697aef49afad788f1b92207, type: 2}
+  - sfx_block: {fileID: 11400000, guid: 2351e72594fdd6e4494e997b7035258b, type: 2}
+  - sfx_die: {fileID: 11400000, guid: ea8453de75db15142a2380cb90be4c8a, type: 2}
+  - sfx_taunt: {fileID: 11400000, guid: c312fab4e1e67c547a1463174cd0d392, type: 2}
+  - swosh: {instanceID: 0}
+  - vfx_spawn: {instanceID: 0}
+  - vfx_despawn: {instanceID: 0}
+  - vfx_hurt: {instanceID: 0}
+  - vfx_block: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

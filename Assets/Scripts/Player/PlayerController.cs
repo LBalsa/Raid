@@ -265,7 +265,11 @@ public class PlayerController : MonoBehaviour
             InCombat = false;
             anim.SetBool("inCombat", false);
         }
-
+        if (Input.GetKey(KeyCode.Q))
+        {
+            //block
+        }
+ 
 
         //HeavyAttacks
         if (stateinfo.fullPathHash == state_Combat)

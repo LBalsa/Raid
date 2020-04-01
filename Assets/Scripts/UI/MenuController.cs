@@ -77,6 +77,7 @@ public class MenuController : MonoBehaviour
         }
     }
 
+    #region Menu
     public void Pause()
     {
         pauseMenu.SetActive(true);
@@ -84,9 +85,7 @@ public class MenuController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
-    #region Menu
-
-    public void Continue()
+    public void Unpause()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -115,13 +114,13 @@ public class MenuController : MonoBehaviour
 
     public void MainMenu()
     {
-        SceneManager.LoadScene("Main Menu");
         //Time.timeScale = 1.0f;
+        SceneManager.LoadScene("Main Menu");
     }
 
     public void Quit()
     {
-        Time.timeScale = 1.0f;
+        //Time.timeScale = 1.0f;
         Application.Quit();
     }
 
