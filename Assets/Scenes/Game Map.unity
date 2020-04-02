@@ -601,6 +601,12 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114101938077415126, guid: 3360cc02498537644821219f8fe156d9,
+        type: 3}
+      propertyPath: weaponUpgradeGroup
+      value: 
+      objectReference: {fileID: 11400000, guid: 37c43e56262e6df4f9a4bf3e1718aee9,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3360cc02498537644821219f8fe156d9, type: 3}
 --- !u!4 &10960663 stripped
@@ -51086,8 +51092,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1206060078}
-  m_LocalRotation: {x: -0.29346493, y: 0.016672883, z: 0.005145377, w: 0.9558106}
-  m_LocalPosition: {x: 1.5581865, y: -4.7041044, z: -220.24753}
+  m_LocalRotation: {x: -0.030035464, y: 0.96848124, z: 0.19975205, w: 0.14574343}
+  m_LocalPosition: {x: 5.6270666, y: -12.433751, z: -204.86479}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -52311,7 +52317,7 @@ PrefabInstance:
     - target: {fileID: 114565200919742114, guid: 6ed146d73b1b921408ac3a8e9381305a,
         type: 3}
       propertyPath: numberOfWaves
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 114565200919742114, guid: 6ed146d73b1b921408ac3a8e9381305a,
         type: 3}
@@ -72567,8 +72573,6 @@ MonoBehaviour:
   damage: 0
   speed: 1
   armed: 0
-  weaponUpgradeReference: {fileID: 0}
-  upgradeType: 0
   passiveEffectReference: {fileID: 0}
 --- !u!54 &1712309610
 Rigidbody:

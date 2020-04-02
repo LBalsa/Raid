@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
-
-namespace Weapons
+ 
+namespace Weapons.WeaponUpgrades
 {
-    namespace WeaponUpgrades
-    {
-        [CreateAssetMenu(menuName = "WeaponUpgrade/Ice")]
+    [CreateAssetMenu(menuName = "WeaponUpgrade/Ice")]
         public class MysticalAura : WeaponUpgrade
         {
             public override void ApplyActiveEffect(MainWeapon mainWeapon, IDestructable destructable)
@@ -23,4 +21,3 @@ namespace Weapons
             }
         }
     }
-}

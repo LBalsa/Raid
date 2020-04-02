@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 
-namespace Weapons
+namespace Weapons.WeaponUpgrades
+
 {
-    namespace WeaponUpgrades
-    {
-        [CreateAssetMenu(menuName = "WeaponUpgrade/Group")]
+    [CreateAssetMenu(menuName = "WeaponUpgrade/Group")]
         public class WeaponUpgradeGroup : ScriptableObject
         {
             public WeaponUpgrade[] Upgrades;
         }
     }
-}

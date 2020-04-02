@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Weapons
-{
-    namespace WeaponUpgrades
+    namespace Weapons.WeaponUpgrades
     {
         [CreateAssetMenu(menuName = "WeaponUpgrade/Fire")]
         public class Fire : WeaponUpgrade
@@ -30,4 +28,3 @@ namespace Weapons
             }
         }
     }
-}

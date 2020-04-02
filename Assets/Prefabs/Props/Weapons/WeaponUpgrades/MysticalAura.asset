@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db4bd66c625ac724b9946ea740d193f3, type: 3}
+  m_Name: MysticalAura
+  m_EditorClassIdentifier: Assembly-CSharp:WeaponUpgrades:IceWeaponUpgrade
+  vfx_active: {fileID: 1845240806346120, guid: b395d5d6eb4b4b846acc021ee036b744, type: 3}
+  vfx_passive: {fileID: 100000, guid: 6d21e50b0e524e5409c384f055c44d46, type: 3}

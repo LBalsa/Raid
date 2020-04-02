@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Items;
+using SpecialEffects.Structures;
 
 //[RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(AudioSource))]

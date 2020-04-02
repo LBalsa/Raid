@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
+using SpecialEffects;
 
 [CustomEditor(typeof(AudioEvent), true)]
 public class AudioEventEditor : Editor

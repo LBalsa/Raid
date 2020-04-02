@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -33,12 +34,12 @@ MonoBehaviour:
     ranged: 1
     swarmer: 0
   enemyL:
-  - {fileID: 1993362039770426, guid: b01da5f27bb141a4bb2f018be970edf6, type: 2}
-  - {fileID: 1443929183766380, guid: a4dae33162b679f4d9734d68b183f848, type: 2}
-  - {fileID: 1115596105737350, guid: c1e71ad05d7b1884aa58b7b466d805ad, type: 2}
+  - {fileID: 1993362039770426, guid: b01da5f27bb141a4bb2f018be970edf6, type: 3}
+  - {fileID: 1443929183766380, guid: a4dae33162b679f4d9734d68b183f848, type: 3}
+  - {fileID: 1115596105737350, guid: c1e71ad05d7b1884aa58b7b466d805ad, type: 3}
   enemyH:
-  - {fileID: 1217177082808504, guid: ed2f38fa2f107e141ba82fe1c2f7c21d, type: 2}
+  - {fileID: 1217177082808504, guid: ed2f38fa2f107e141ba82fe1c2f7c21d, type: 3}
   enemyR:
-  - {fileID: 1155395479194130, guid: 757d0f49d6e04c94cb37e2f990d41cc5, type: 2}
+  - {fileID: 1155395479194130, guid: 757d0f49d6e04c94cb37e2f990d41cc5, type: 3}
   enemyS:
-  - {fileID: 1889459821504918, guid: 65fa6f3b73a1af0428acefff38c04804, type: 2}
+  - {fileID: 1889459821504918, guid: 65fa6f3b73a1af0428acefff38c04804, type: 3}

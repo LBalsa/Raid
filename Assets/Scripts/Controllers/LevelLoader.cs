@@ -3,35 +3,38 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LevelLoader : MonoBehaviour
+namespace Controllers
 {
-    public GameObject loadingScreen;
-    public Slider slider;
-
-    public static LevelLoader inst;
-
-    private void Awake()
+    public class LevelLoader : MonoBehaviour
     {
-        inst = this;
-    }
+        public GameObject loadingScreen;
+        public Slider slider;
 
-    public void LoadLevel(int sceneIndex)
-    {
-        StartCoroutine(LoadAsynchronously(sceneIndex));
-    }
+        public static LevelLoader inst;
 
-    private IEnumerator LoadAsynchronously(int sceneIndex)
-    {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
-        MainMenuController.inst.textScreen.SetActive(false);
-        loadingScreen.SetActive(true);
-
-        while (!operation.isDone)
+        private void Awake()
         {
-            float progress = Mathf.Clamp01(operation.progress / 0.9f);
-            slider.value = progress;
+            inst = this;
+        }
 
-            yield return null;
+        public void LoadLevel(int sceneIndex)
+        {
+            StartCoroutine(LoadAsynchronously(sceneIndex));
+        }
+
+        private IEnumerator LoadAsynchronously(int sceneIndex)
+        {
+            AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
+            MainMenuController.inst.textScreen.SetActive(false);
+            loadingScreen.SetActive(true);
+
+            while (!operation.isDone)
+            {
+                float progress = Mathf.Clamp01(operation.progress / 0.9f);
+                slider.value = progress;
+
+                yield return null;
+            }
         }
     }
 }

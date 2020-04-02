@@ -1,11 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Weapons
+namespace Weapons.WeaponUpgrades
 {
-    namespace WeaponUpgrades
-    {
-        [CreateAssetMenu(menuName = "WeaponUpgrade/WeaponUpgrade")]
-        public abstract class WeaponUpgrade : ScriptableObject, IWeaponUpgrade
+    public abstract class WeaponUpgrade : ScriptableObject, IWeaponUpgrade
         {
             // Passive and active VFX.
             [SerializeField]
@@ -20,4 +17,3 @@ namespace Weapons
             public abstract void ApplyActiveEffect(MainWeapon mainWeapon, IDestructable destructable);
         }
     }
-}
