@@ -674,7 +674,7 @@ GameObject:
   - component: {fileID: 135383536833642856}
   - component: {fileID: 114101938077415126}
   m_Layer: 0
-  m_Name: Magician NPC
+  m_Name: NPC
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -897,10 +897,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333f4155d3c869845ad3a9f24b0166cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogue: {fileID: 11400000, guid: f3841592d946b9948a0a5ebff3f61040, type: 2}
-  dialogueCanvasPrefab: {fileID: 4769494769793621907, guid: c6d032fcd8f55524391140c520191877,
-    type: 3}
-  weaponUpgradeGroup: {fileID: 11400000, guid: 37c43e56262e6df4f9a4bf3e1718aee9, type: 2}
+  dialogue: {fileID: 0}
+  DialogueCanvas: {fileID: 0}
+  weaponUpgradeGroup: {fileID: 0}
   canvasCallout: {fileID: 0}
   canvasPanel: {fileID: 0}
   canvasButton0: {fileID: 0}

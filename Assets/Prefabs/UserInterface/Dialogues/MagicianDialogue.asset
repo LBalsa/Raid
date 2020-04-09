@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7624717c658b7314a8ca85e0f56fe37b, type: 3}
+  m_Name: MagicianDialogue
+  m_EditorClassIdentifier: 
+  firstEntry:
+    dialogue: I can upgrade your weapon if you wish...
+    options:
+    - option: "Sure thing!\t"
+      actionIndex: 0
+      dialogueEntry:
+        dialogue: Excellent. What kind of upgrade would you like?
+        options:
+        - option: Fire!
+          actionIndex: 1
+          dialogueEntry:
+            dialogue: Fire will schorch your enemies over time, mind your clothes
+              though. Are you sure this is what you want?
+            options:
+            - option: "Aye!\t"
+              actionIndex: 10
+              dialogueEntry:
+                dialogue: 
+                options: []
+            - option: Actually...
+              actionIndex: -1
+              dialogueEntry:
+                dialogue: 
+                options: []
+            - option: Bye!
+              actionIndex: 0
+              dialogueEntry:
+                dialogue: 
+                options: []
+        - option: Mystic Aura!
+          actionIndex: 0
+          dialogueEntry:
+            dialogue: This will empower you weapon with the gods! Are you sure this
+              is what you want?
+            options:
+            - option: But of course old man!
+              actionIndex: 2
+              dialogueEntry:
+                dialogue: 
+                options: []
+            - option: "Actualky...\t"
+              actionIndex: -1
+              dialogueEntry:
+                dialogue: 
+                options: []
+            - option: BYE!
+              actionIndex: 0
+              dialogueEntry:
+                dialogue: 
+                options: []
+        - option: None!! HAH
+          actionIndex: 0
+          dialogueEntry:
+            dialogue: 
+            options: []
+    - option: Bugger off!
+      actionIndex: 0
+      dialogueEntry:
+        dialogue: 
+        options: []

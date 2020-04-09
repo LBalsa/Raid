@@ -9,3 +9,4 @@ public interface IWeaponUpgrade
     void ApplyPassiveEffect(MainWeapon mainWeapon);
     void RemovePassiveEffect(MainWeapon mainWeapon);
 }
+

@@ -607,6 +607,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 37c43e56262e6df4f9a4bf3e1718aee9,
         type: 2}
+    - target: {fileID: 114101938077415126, guid: 3360cc02498537644821219f8fe156d9,
+        type: 3}
+      propertyPath: dialogue
+      value: 
+      objectReference: {fileID: 11400000, guid: f3841592d946b9948a0a5ebff3f61040,
+        type: 2}
+    - target: {fileID: 114101938077415126, guid: 3360cc02498537644821219f8fe156d9,
+        type: 3}
+      propertyPath: dialogueCanvasPrefab
+      value: 
+      objectReference: {fileID: 4769494769793621907, guid: c6d032fcd8f55524391140c520191877,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3360cc02498537644821219f8fe156d9, type: 3}
 --- !u!4 &10960663 stripped
@@ -1139,7 +1151,7 @@ Camera:
   serializedVersion: 2
   m_ClearFlags: 2
   m_BackGroundColor: {r: 1, g: 1, b: 1, a: 1}
-  m_projectionMatrixMode: 1
+  m_projectionMatrixMode: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
   m_GateFitMode: 2
@@ -51092,8 +51104,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1206060078}
-  m_LocalRotation: {x: -0.030035464, y: 0.96848124, z: 0.19975205, w: 0.14574343}
-  m_LocalPosition: {x: 5.6270666, y: -12.433751, z: -204.86479}
+  m_LocalRotation: {x: -0.13029246, y: 0.059302896, z: 0.007807373, w: 0.98966974}
+  m_LocalPosition: {x: 11.017637, y: -4.543, z: -222.369}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -60283,7 +60295,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1384530308}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 243147036222073974, guid: 1fae584f6bb788941b4cc3a112853649,
     type: 2}

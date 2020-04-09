@@ -7,7 +7,6 @@ namespace Weapons.WeaponUpgrades
         {
             public override void ApplyActiveEffect(MainWeapon mainWeapon, IDestructable destructable)
             {
-                throw new System.NotImplementedException();
             }
 
             public override void ApplyPassiveEffect(MainWeapon mainWeapon)

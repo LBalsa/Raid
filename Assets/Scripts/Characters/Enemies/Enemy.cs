@@ -131,7 +131,7 @@ namespace Characters.Enemies
 
             rb = GetComponent<Rigidbody>();
             rb.isKinematic = true;
-            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
             PlaySound(fX.swosh);
 
             // Rotate towards target.
