@@ -4,8 +4,10 @@ using Weapons.WeaponUpgrades;
 
 namespace Characters.Friendlies
 {
-    public class Magician : Character, IDialogueAction
+    public class WeaponUpgrader : Character, IDialogueAction
     {
+        protected override string Callout { get => "Pssst! Over here lad!"; }
+
         [Header("Weapon Upgrades")]
         private int weaponUpgradeIndex;
         public WeaponUpgradeGroup weaponUpgradeGroup;
@@ -18,40 +20,7 @@ namespace Characters.Friendlies
         private readonly DialogueEntry iceUp = new DialogueEntry("This will empower you weapon with the gods! Are you sure this is what you want?", "Ayeyeyeye!", "Ac-tually...", "Bye!");
         private readonly DialogueEntry upgradeChoiceAlt = new DialogueEntry("Once again. What kind of upgrade would you like?", "Fire!", "My stick arrgh", "Bye!");
 
-        private void Update()
-        {
-            if (isTriggered)
-            {
-                // Open dialogue.
-                if (!isBusy && (Input.GetKeyDown(KeyCode.E) || (Input.GetButtonDown("Square"))))
-                {
-                    StartInteraction();
-                }
-
-                if (isBusy && Input.GetKeyDown(KeyCode.Q))
-                {
-                    CloseCanvas();
-                }
-            }
-        }
-
-        void StartInteraction()
-        {
-            isBusy = true;
-
-            // Disable callout and floating icon.
-            keyPrompt.SetActive(false);
-            dialogueCanvas.ToggleCallout(false);
-            dialogueCanvas.ToggleDialogue(true);
-            dialogue.StartDialogue(dialogueCanvas, this);
-
-            // Prevent player movement and handover control to UI.
-            PlayerController.inst.CanMove = false;
-            //PlayerController.inst.CanBeAttacked = false;
-        }
-
-
-        public void PerformAction(int actionIndex)
+        public override void PerformAction(int actionIndex)
         {
             switch (actionIndex)
             {

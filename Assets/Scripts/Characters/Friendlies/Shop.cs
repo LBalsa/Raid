@@ -6,42 +6,31 @@ namespace Characters.Friendlies
     [SelectionBase]
     public class Shop : Character
     {
+        protected override string Callout { get => "Fresh fish! Fresh fish! Who wants to buy some fresh fish! Straight outta de'sea."; }
+
         [Header("Shop SFX")]
         public AudioClip success;
         public AudioClip fail;
         public GameObject shopCanvas;
 
-        private string shopCallout = "Fresh fish! Fresh fish! Who wants to buy some fresh fish! Straight outta de'sea.";
-
-        // Update is called once per frame
-        private void Update()
+        protected override void StartInteraction()
         {
-            if (isTriggered)
-            {
-                if (!isBusy && Input.GetKeyDown(KeyCode.E) || (Input.GetButton("Square")))
-                {
-                    OpenShop();
-                }
-            }
-        }
-
-        protected void OpenShop()
-        {
-            Cursor.lockState = CursorLockMode.None;
             isBusy = true;
             shopCanvas.SetActive(true);
-            //UnityEngine.EventSystems.EventSystem.current.firstSelectedGameObject = shop.gameObject;
-            CheckGold(0);
             Time.timeScale = 0f;
+            Cursor.lockState = CursorLockMode.None;
+
+            PlaySFX(success);
         }
 
-        public void CloseShop()
+        public override void EndInteraction()
         {
-            Cursor.lockState = CursorLockMode.Locked;
             isBusy = false;
             shopCanvas.SetActive(false);
-
             Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
+
+            PlaySFX(success);
         }
 
         // Check if player has enough money.

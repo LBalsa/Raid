@@ -15,13 +15,13 @@ namespace Characters
     #endregion
 
     [SelectionBase]
-    public class Character : MonoBehaviour
+    public class Character : MonoBehaviour, IDialogueAction
     {
         public enum CharacterFaction { Ally, Neutral, Enemy }
         protected CharacterFaction characterFaction = CharacterFaction.Neutral;
         [SerializeField]
         protected CharacterStats stats;
-        
+
         #region Components
         protected Animator anim;
         protected AudioSource aus;
@@ -36,9 +36,10 @@ namespace Characters
         public Dialogue dialogue;
         public GameObject canvasPrefab;
         protected IDialogueCanvas dialogueCanvas;
+        protected virtual string Callout { get => "Hey there! I'm a random npc!"; }
 
         protected bool isBusy;
-        protected bool isTriggered = false;
+        protected bool isTriggered;
 
         protected virtual void Start()
         {
@@ -54,7 +55,52 @@ namespace Characters
             rb = GetComponent<Rigidbody>();
         }
 
-        protected virtual void OpenCanvas(bool? withCalloutOrDialogue)
+        private void Update()
+        {
+            if (isTriggered)
+            {
+                // Open dialogue.
+                if (!isBusy && (Input.GetKeyDown(KeyCode.E) || (Input.GetButtonDown("Square"))))
+                {
+                    StartInteraction();
+                }
+                else if (isBusy && Input.GetKeyDown(KeyCode.Q))
+                {
+                    EndInteraction();
+                }
+            }
+        }
+
+        protected virtual void StartInteraction()
+        {
+            if (dialogue != null)
+            {
+                isBusy = true;
+                ToggleKeyPrompt(false);
+                dialogue.StartDialogue(dialogueCanvas, this);
+
+                // Prevent player movement and handover control to UI.
+                PlayerController.inst.CanMove = false;
+                //PlayerController.inst.CanBeAttacked = false;
+            }
+        }
+
+        public virtual void EndInteraction()
+        {
+            CloseCanvas();
+        }
+
+        public virtual void PerformAction(int actionIndex)
+        {
+            switch (actionIndex)
+            {
+                default:
+                    CloseCanvas();
+                    break;
+            }
+        }
+
+        protected virtual void OpenCanvas(bool withCallout, string callOut)
         {
             if (dialogueCanvas == null && canvasPrefab != null)
             {
@@ -65,8 +111,7 @@ namespace Characters
                 dialogueCanvas.Dialogue = dialogue;
             }
 
-            if (withCalloutOrDialogue == true) { dialogueCanvas.ToggleDialogue(true); }
-            else if (withCalloutOrDialogue == false) { dialogueCanvas.ToggleCallout(true); }
+            if (withCallout == true) { dialogueCanvas.ToggleCallout(true); dialogueCanvas.SetCallout(callOut); }
         }
 
         protected virtual void CloseCanvas()
@@ -89,7 +134,7 @@ namespace Characters
         {
             if (other.tag == "Player" && (characterFaction == CharacterFaction.Ally || characterFaction == CharacterFaction.Neutral))
             {
-                OpenCanvas(false);
+                OpenCanvas(true, Callout);
                 isTriggered = true;
                 ToggleKeyPrompt(true);
             }

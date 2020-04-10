@@ -67,7 +67,7 @@ public class PS4UIControllerShop : MonoBehaviour
             }
             else if (index == 3)
             {
-                GetComponent<Shop>().CloseShop();
+                GetComponent<Shop>().EndInteraction();
                 pauseScreen.SetActive(false);
                 Time.timeScale = 1.0f;
             }
@@ -75,7 +75,7 @@ public class PS4UIControllerShop : MonoBehaviour
         if (Input.GetButtonDown("Circle") || Input.GetKeyDown(KeyCode.Return))
         {
             pauseScreen.SetActive(false);
-            GetComponent<Shop>().CloseShop();
+            GetComponent<Shop>().EndInteraction();
 
         }
 
