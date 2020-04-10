@@ -11,20 +11,12 @@ namespace Characters.Enemies
     {
         #region Stats
         [Header("Stats")]
-        [SerializeField]
-        protected float maxHealth = 4;
         protected float health;
-        [SerializeField]
-        protected float damage = 1;
-        [SerializeField]
-        protected float attackCooldown = 2.5f;
         protected float attackTimer;
         protected float recoverTimer = 2f;
         protected bool blocking = false;
-        [SerializeField]
-        protected float maxdistance = 2;
-        [SerializeField]
-        protected bool retreats = true;
+        protected float distance;
+
         [Header("Weapons")]
         [SerializeField]
         public GameObject weaponPrefab;
@@ -32,12 +24,6 @@ namespace Characters.Enemies
         public Transform weaponSlot;
         #endregion
 
-        [Header("Nav")]
-        protected float distance;
-        [SerializeField]
-        protected float moveSpeed = 2.5f;
-        [SerializeField]
-        protected float rotationSpeed = 180f;
         protected PlayerController target;
 
         #region Components
@@ -64,8 +50,8 @@ namespace Characters.Enemies
         protected bool beenHit = false;
         protected bool isBlocking = false;
         protected bool isRetreating = false;
-        protected int hits = 0;
-        public int maxHitsBlocked = 1;
+
+        protected int blockedHits = 0;
         protected float blockTimer;
 
 
@@ -81,15 +67,15 @@ namespace Characters.Enemies
             characterFaction = CharacterFaction.Enemy;
             base.Initialise();
 
-            health = maxHealth;
+            health = stats.maxHealth;
             target = PlayerController.inst;
             state = AIState.idle;
             blockTimer = 0;
 
-            nav.speed = moveSpeed;
+            nav.speed = stats.moveSpeed;
             nav.autoBraking = true;
             nav.updatePosition = false;
-            nav.stoppingDistance = maxdistance;
+            nav.stoppingDistance = stats.maxdistance;
 
             rb.isKinematic = true;
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
@@ -115,7 +101,7 @@ namespace Characters.Enemies
                     Debug.LogError("Weapon prefab missing. Fisticuffs activated.");
                 }
             }
-            mainWeapon.SetUp(false, false, damage);
+            mainWeapon.SetUp(false, false, stats.damage);
             mainWeapon.Disable();
 
             // Check fists, to be used if there is no weapon reference.
@@ -123,7 +109,7 @@ namespace Characters.Enemies
             {
                 fist = GetComponentInChildren<Weapon>();
             }
-            fist.SetUp(false, false, damage);
+            fist.SetUp(false, false, stats.damage);
             fist.Disable();
         }
 
@@ -260,9 +246,9 @@ namespace Characters.Enemies
                 mainWeapon.Disable();
             }
             nav.isStopped = false;
-            if (stateCtrl != AIState.circling) { nav.stoppingDistance = maxdistance; }
+            if (stateCtrl != AIState.circling) { nav.stoppingDistance = stats.maxdistance; }
 
-            if (distance <= maxdistance) { ChangeState(AIState.circling); }
+            if (distance <= stats.maxdistance) { ChangeState(AIState.circling); }
         }
 
         protected virtual void Cirling()
@@ -273,9 +259,9 @@ namespace Characters.Enemies
                 if (mainWeapon)
                 {
                     mainWeapon.Disable();
-                }            //nav.speed = moveSpeed;
+                }            //nav.speed = stats.moveSpeed;
                 ChangeState(AIState.circling);
-                attackTimer = attackCooldown;
+                attackTimer = stats.attackCooldown;
             }
 
             // Check for player attacks.
@@ -288,25 +274,25 @@ namespace Characters.Enemies
                 Retreat(false);
             }
             // If player goes out of range.
-            else if (distance > maxdistance * 2f)
+            else if (distance > stats.maxdistance * 2f)
             {
                 Retreat(false);
                 ChangeState(AIState.moving);
             }
             // If player moves away.
-            else if (distance > maxdistance * 1.35f)
+            else if (distance > stats.maxdistance * 1.35f)
             {
                 Retreat(false);
                 nav.destination = target.transform.position;
             }
             // End retreat.
-            else if (distance <= maxdistance * 1.25 && distance > maxdistance * .75 && isRetreating)
+            else if (distance <= stats.maxdistance * 1.25 && distance > stats.maxdistance * .75 && isRetreating)
             {
                 nav.Warp(anim.transform.position);
                 Retreat(false);
             }
             // Retreat if player is too close.
-            if (distance < maxdistance * 0.6f && !isRetreating && retreats)
+            if (distance < stats.maxdistance * 0.6f && !isRetreating && stats.retreats)
             {
                 // Rotate to face player.
                 var lookPos = target.transform.position - transform.position;
@@ -374,21 +360,21 @@ namespace Characters.Enemies
             ChangeState(AIState.attacking);
 
             // Move closer to player & allow it to be attacked.
-            nav.stoppingDistance = maxdistance / 2;
+            nav.stoppingDistance = stats.maxdistance / 2;
             target.GetComponent<PlayerController>().CanBeAttacked = true;
 
             // Go back to moving if player moves away.
-            if (distance > maxdistance * 2)
+            if (distance > stats.maxdistance * 2)
             {
                 ChangeState(AIState.moving);
             }
-            else if (distance > maxdistance / 2)
+            else if (distance > stats.maxdistance / 2)
             {
                 //Move towards player.
-                //myTransform.position += myTransform.forward * moveSpeed * Time.deltaTime;
+                //myTransform.position += myTransform.forward * stats.moveSpeed * Time.deltaTime;
             }
             // If within stricking distance.
-            else if (distance <= maxdistance / 2)
+            else if (distance <= stats.maxdistance / 2)
             {
                 // Play SFX.
                 PlaySound(fX.sfx_attack);
@@ -404,7 +390,7 @@ namespace Characters.Enemies
                 ChangeState(AIState.recovering);
                 //Invoke("AttackEnd", 1.5f);
             }
-            // transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position - transform.position), rotationSpeed * Time.deltaTime);
+            // transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position - transform.position), stats.rotationSpeed * Time.deltaTime);
         }
 
         protected virtual void Blocking()
@@ -412,7 +398,7 @@ namespace Characters.Enemies
             // State entry;
             if (stateCtrl != AIState.blocking)
             {
-                hits = 0;
+                blockedHits = 0;
                 anim.SetBool("Block", true);
                 blockTimer = 3f;
                 ChangeState(AIState.blocking);
@@ -453,7 +439,7 @@ namespace Characters.Enemies
         protected virtual void BlockStart()
         {
             //Debug.Log("block start");
-            hits = 0;
+            blockedHits = 0;
             anim.SetLayerWeight(1, 1);
 
             anim.SetBool("isBlocking", true);
@@ -492,7 +478,7 @@ namespace Characters.Enemies
         protected virtual void AttackEnd()
         {
             target.GetComponent<PlayerController>().CanBeAttacked = false;
-            nav.stoppingDistance = maxdistance;
+            nav.stoppingDistance = stats.maxdistance;
             if (mainWeapon) { mainWeapon.Disable(); }
             else if (fist) { fist.Disable(); }
             ChangeState(AIState.circling);
@@ -510,7 +496,7 @@ namespace Characters.Enemies
         private void DisableRightArm()
         {
             target.GetComponent<PlayerController>().CanBeAttacked = false;
-            nav.stoppingDistance = maxdistance;
+            nav.stoppingDistance = stats.maxdistance;
             if (mainWeapon) { mainWeapon.Disable(); }
             else if (fist) { fist.Disable(); }
             ChangeState(AIState.circling);
@@ -539,34 +525,38 @@ namespace Characters.Enemies
         // Damage from player.
         public void TakeDamage(float damage, Collision collision)
         {
+            // TODO: This should be a list similar to the apply damage method
             // Return if already been hit in last half second;
             // Used to prevent double hit from single attack.
             if (beenHit) { return; }
             beenHit = true;
             Invoke("ResetHit", 0.5f);
 
-            // Disable weapon collider to stop attack.
-            if (mainWeapon) { mainWeapon.Disable(); }
-            else if (fist) { fist.Disable(); }
-
             // If enemy is alive.
             if (health > 0)
             {
+                // Disable weapon collider to stop attack.
+                if (mainWeapon) { mainWeapon.Disable(); }
+                else if (fist) { fist.Disable(); }
+
                 // If enemy can block, play block animation and sfx, possible calculate half the damage.
-                if (blocking && hits < maxHitsBlocked)
+                if (blocking && blockedHits < stats.maxBlockHits)
                 {
                     anim.SetTrigger("Block");
-                    Instantiate(fX.vfx_block, collision.contacts[0].point, Quaternion.identity);
                     fX.sfx_block.Play(aus);
-                    //CalculateDamage(damage / 2);
+                    Instantiate(fX.vfx_block, collision.contacts[0].point, Quaternion.identity);
+
+                    //CalculateDamage(damage / 4);
+                    blockedHits++;
                 }
-                // If enemy isn't or can't block, play hurt animation and sfx, calculate damage.
+                // If enemy isn't blocking or can't block, play hurt animation and sfx, calculate damage.
                 else
                 {
                     BlockEnd();
-                    Instantiate(fX.vfx_hurt, collision.contacts[0].point, Quaternion.identity);
-                    fX.sfx_hurt.Play(aus);
                     anim.SetTrigger("Hit");
+                    fX.sfx_hurt.Play(aus);
+                    Instantiate(fX.vfx_hurt, collision.contacts[0].point, Quaternion.identity);
+
                     CalculateDamage(damage);
                 }
             }
@@ -610,14 +600,14 @@ namespace Characters.Enemies
                 health = 0;
             }
 
-            if (health > maxHealth)
+            if (health > stats.maxHealth)
             {
-                health = maxHealth;
+                health = stats.maxHealth;
             }
 
-            if (maxHealth < 1)
+            if (stats.maxHealth < 1)
             {
-                maxHealth = 1;
+                stats.maxHealth = 1;
             }
 
             //healthBarLength = ( * (health / (float)maxHealth);
@@ -636,7 +626,7 @@ namespace Characters.Enemies
             nav.isStopped = true;
 
             // Drop loot.
-            lootTable.DropLoot((int)maxHealth, transform.position);
+            lootTable.DropLoot((int)stats.maxHealth, transform.position);
 
             // Update state and report death to spawner.
             if (state != AIState.dead && spawner)

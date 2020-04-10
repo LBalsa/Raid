@@ -1985,6 +1985,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc08e607d8489b84ba28ed54a0c86397, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats: {fileID: 11400000, guid: c87072786ab38184291cfb3c22811ac3, type: 2}
   keyPrompt: {fileID: 0}
   dialogue: {fileID: 0}
   canvasPrefab: {fileID: 0}

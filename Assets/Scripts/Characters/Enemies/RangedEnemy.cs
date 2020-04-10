@@ -21,23 +21,30 @@ namespace Characters.Enemies
 
         public void Fire()
         {
-            //Hide fixed axe;
+            Vector3 target = PlayerController.inst.transform.position;
+
+            // Hide hand axe;
             axe.SetActive(false);
+            
             // Instantiate & setup throwing axe.
             GameObject b = Instantiate(throwingWeapon, enemyArm.transform.position,enemyArm.transform.rotation);
-            b.GetComponent<MainWeapon>().SetUp(false, true, damage);
+            b.GetComponent<MainWeapon>().SetUp(false, true, stats.damage);
             //b.GetComponent<Rigidbody>().AddForce((target.transform.position - enemyArm.transform.position) * projSpeed);
-
             b.GetComponent<Rigidbody>().AddTorque(b.transform.forward * -500);
             b.GetComponent<MainWeapon>().Throw();
+            b.transform.LookAt(target);                     
 
+            // Throw axe by setting its initial velocity.
+            b.GetComponent<Rigidbody>().velocity = CalculateThrowVector(b.transform.position, target);
+
+            // Make hand axe reapear in hand.
+            Invoke("ActivateAxe", 2.0f);
+        }
+
+        private Vector3 CalculateThrowVector(Vector3 from, Vector3 to)
+        {
             // Calculate distance between target and source.
-            Vector3 target = PlayerController.inst.transform.position;
-            float dist = Vector3.Distance(b.transform.position, new Vector3(target.x, target.y+1f, target.z));
-
-            // Rotate axe to face the target.
-            transform.LookAt(target);
-
+            float dist = Vector3.Distance(from, new Vector3(to.x, to.y+1f, to.z));
             // Calculate initival velocity required to hit target.
             float Vi = Mathf.Sqrt(dist * -Physics.gravity.y / (Mathf.Sin(Mathf.Deg2Rad * projectileAngle * 2)));
             float Vy, Vz;   // y,z components of the initial velocity
@@ -51,14 +58,10 @@ namespace Characters.Enemies
             // Convert to global space.
             Vector3 globalVelocity = transform.TransformVector(localVelocity);
 
-            // Throw axe by setting its initial velocity.
-            b.GetComponent<Rigidbody>().velocity = globalVelocity;
-
-            // Make fixed axe reapear in hand.
-            Invoke("ActivateAxe", 2.0f);
+            return globalVelocity;
         }
 
-        private float CalculateShootAngle()
+        private float SomeUnusedMethodWithThisNameINeedCalculateShootAngle()
         {
             float distance = (target.transform.position - transform.position).magnitude;
 
@@ -81,24 +84,16 @@ namespace Characters.Enemies
         // Attacking
         protected override void Attacking()
         {
-
             Vector3 dir = (target.transform.position - transform.position).normalized;
 
             ChangeState(AIState.attacking);
-            if (distance > maxdistance * 2)
+            if (distance > stats.maxdistance * 2)
             {
                 ChangeState(AIState.moving);
             }
 
             anim.SetTrigger("Throw");
             ChangeState(AIState.recovering);
-
         }
-
-        //protected override void AttackEnd()
-        //{
-        //    ChangeState(AIState.circling);
-        //}
-
     }
 }
