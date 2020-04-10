@@ -13,7 +13,6 @@ public class PS4UIControllerPause : MonoBehaviour {
 
     void Start()
     {
-        Shop.inst.CloseShop();
         Time.timeScale = 0.0f;
         pauseScreen.SetActive(true);
     }

@@ -65,6 +65,7 @@ public class HealthManager : MonoBehaviour, IDestructable
             Destroy(other.gameObject);
         }
 
+        // TODO: move this to weapon object
         // Weapons should make a tooltip come up.
         if (other.GetComponent<MainWeapon>())
         {
@@ -85,7 +86,7 @@ public class HealthManager : MonoBehaviour, IDestructable
 
     private void Update()
     {
-        if (IsAlive && !GameController.inst.Paused && PlayerController.inst.CanMove)
+        if (IsAlive && PlayerController.inst.CanMove)// && !GameController.inst.Paused)
         {
             // Do something fun.
 

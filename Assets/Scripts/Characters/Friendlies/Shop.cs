@@ -4,58 +4,23 @@ namespace Characters.Friendlies
 {
     [RequireComponent(typeof(AudioSource))]
     [SelectionBase]
-    public class Shop : MonoBehaviour
+    public class Shop : Character
     {
-        public static Shop inst = null;
-
-        private bool trigger = false;
-        private bool open = false;
-        public float degreesPerSecond = -75.0f;
-        public float amplitude = 0.1f;
-        public float frequency = 1f;
-        private Vector3 posOffset = new Vector3();
-        private Vector3 tempPos = new Vector3();
-
-        public GameObject icon;
-        public GameObject shop;
         [Header("Shop SFX")]
-        private    AudioSource aus = null;
         public AudioClip success;
         public AudioClip fail;
+        public GameObject shopCanvas;
 
-        // Use this for initialization
-        private void Start()
-        {
-            inst = this;
-            aus = GetComponent<AudioSource>();
-            icon.SetActive(false);
-            shop.SetActive(false);
-            posOffset = icon.transform.position;
-        }
+        private string shopCallout = "Fresh fish! Fresh fish! Who wants to buy some fresh fish! Straight outta de'sea.";
 
         // Update is called once per frame
         private void Update()
         {
-            if (trigger)
+            if (isTriggered)
             {
-                if (!open)
+                if (!isBusy && Input.GetKeyDown(KeyCode.E) || (Input.GetButton("Square")))
                 {
-                    icon.transform.Rotate(new Vector3(0f, Time.deltaTime * degreesPerSecond, 0f), Space.World);
-                    tempPos = posOffset;
-                    tempPos.y += Mathf.Sin(Time.fixedTime * Mathf.PI * frequency) * amplitude;
-
-                    icon.transform.position = tempPos;
-                }
-
-                if (Input.GetKeyDown(KeyCode.E) || (Input.GetButton("Square")))
-                {
-                    print(open);
-                    if (open) { }
-                    //CloseShop();
-                    else if (!open)
-                    {
-                        OpenShop();
-                    }
+                    OpenShop();
                 }
             }
         }
@@ -63,9 +28,8 @@ namespace Characters.Friendlies
         protected void OpenShop()
         {
             Cursor.lockState = CursorLockMode.None;
-            open = true;
-            icon.SetActive(false);
-            shop.SetActive(true);
+            isBusy = true;
+            shopCanvas.SetActive(true);
             //UnityEngine.EventSystems.EventSystem.current.firstSelectedGameObject = shop.gameObject;
             CheckGold(0);
             Time.timeScale = 0f;
@@ -74,20 +38,10 @@ namespace Characters.Friendlies
         public void CloseShop()
         {
             Cursor.lockState = CursorLockMode.Locked;
-            open = false;
-            icon.SetActive(true);
-            shop.SetActive(false);
+            isBusy = false;
+            shopCanvas.SetActive(false);
 
             Time.timeScale = 1f;
-        }
-
-        protected void OnTriggerEnter(Collider other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                icon.SetActive(true);
-                trigger = true;
-            }
         }
 
         // Check if player has enough money.
@@ -125,7 +79,6 @@ namespace Characters.Friendlies
             {
                 HealthManager.inst.BuyBread();
             }
-
         }
 
         public void BuyHeart()
@@ -136,28 +89,9 @@ namespace Characters.Friendlies
             }
         }
 
-        protected void OnTriggerExit(Collider other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                icon.SetActive(false);
-                trigger = false;
-            }
-        }
-
-        private void OnTriggerStay(Collider other)
-        {
-            if (other.tag == "Player" && (Input.GetKeyDown(KeyCode.E) || (Input.GetButton("Square"))))
-            {
-                //Time.timeScale = 0.0f;
-                //shop.SetActive(true);
-            }
-        }
-
         public void Continue()
         {
-            shop.SetActive(false);
-            icon.SetActive(true);
+            shopCanvas.SetActive(false);
             Time.timeScale = 1.0f;
         }
 

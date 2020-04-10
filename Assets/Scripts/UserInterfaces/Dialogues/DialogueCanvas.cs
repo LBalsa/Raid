@@ -71,10 +71,6 @@ public class DialogueCanvas : MonoBehaviour, IDialogueCanvas
     public void ToggleDialogue(bool state)
     {
         dialoguePanel.SetActive(state);
-        if (state)
-        {
-            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(buttons[0].gameObject);
-        }
     }
 
 

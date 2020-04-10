@@ -1,25 +1,13 @@
-﻿using System.Collections;
-using UnityEngine;
-using UnityEngine.AI;
-using Weapons;
-using Items;
-using Utility;
+﻿using Items;
 using SpecialEffects;
 using SpecialEffects.Structures;
+using System.Collections;
+using UnityEngine;
+using Weapons;
 
 namespace Characters.Enemies
 {
-    #region RequireComponent
-    [RequireComponent(typeof(Animator))]
-    [RequireComponent(typeof(AudioSource))]
-    [RequireComponent(typeof(LookAt))]
-    [RequireComponent(typeof(NavMeshAgent))]
-    [RequireComponent(typeof(Rigidbody))]
-    [RequireComponent(typeof(CapsuleCollider))]
-    #endregion
-
-    [SelectionBase]
-    public class Enemy : MonoBehaviour, IDestructable
+    public class Enemy : Character, IDestructable
     {
         #region Stats
         [Header("Stats")]
@@ -35,7 +23,9 @@ namespace Characters.Enemies
         protected bool blocking = false;
         [SerializeField]
         protected float maxdistance = 2;
-        public bool retreats = true;
+        [SerializeField]
+        protected bool retreats = true;
+        [Header("Weapons")]
         [SerializeField]
         public GameObject weaponPrefab;
         [SerializeField]
@@ -51,11 +41,6 @@ namespace Characters.Enemies
         protected PlayerController target;
 
         #region Components
-        protected Animator anim;
-        protected AudioSource aus;
-        protected LookAt lookAt;
-        protected NavMeshAgent nav;
-        protected Rigidbody rb;
         protected Weapon fist;
         protected MainWeapon mainWeapon;
 
@@ -88,7 +73,36 @@ namespace Characters.Enemies
         private void Start()
         {
             Initialise();
+            InitialiseWeapons();
+        }
 
+        protected override void Initialise()
+        {
+            characterFaction = CharacterFaction.Enemy;
+            base.Initialise();
+
+            health = maxHealth;
+            target = PlayerController.inst;
+            state = AIState.idle;
+            blockTimer = 0;
+
+            nav.speed = moveSpeed;
+            nav.autoBraking = true;
+            nav.updatePosition = false;
+            nav.stoppingDistance = maxdistance;
+
+            rb.isKinematic = true;
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            PlaySound(fX.swosh);
+
+            // Rotate towards target.
+            var lookPos = target.transform.position;
+            lookPos.y = transform.position.y;
+            transform.LookAt(lookPos);
+        }
+
+        protected virtual void InitialiseWeapons()
+        {
             // Check for weapon prefab and instantiate it.
             if (!mainWeapon)
             {
@@ -111,33 +125,6 @@ namespace Characters.Enemies
             }
             fist.SetUp(false, false, damage);
             fist.Disable();
-        }
-
-        protected void Initialise()
-        {
-            health = maxHealth;
-            target = PlayerController.inst;
-            state = AIState.idle;
-            blockTimer = 0;
-            anim = GetComponent<Animator>();
-            aus = GetComponent<AudioSource>();
-            lookAt = GetComponent<LookAt>();
-
-            nav = GetComponent<NavMeshAgent>();
-            nav.speed = moveSpeed;
-            nav.autoBraking = true;
-            nav.updatePosition = false;
-            nav.stoppingDistance = maxdistance;
-
-            rb = GetComponent<Rigidbody>();
-            rb.isKinematic = true;
-            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-            PlaySound(fX.swosh);
-
-            // Rotate towards target.
-            var lookPos = target.transform.position;
-            lookPos.y = transform.position.y;
-            transform.LookAt(lookPos);
         }
 
         // Update is called once per frame

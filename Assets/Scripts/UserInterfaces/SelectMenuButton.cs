@@ -5,7 +5,7 @@ using UnityEngine.UI;
 // Select a button from the menu if the event system does not do so automatically.
 public class SelectMenuButton : MonoBehaviour
 {
-    public GameObject buttonToBeSelected;
+    private GameObject buttonToBeSelected;
     private bool buttonSelected = false;
 
     private void Awake()

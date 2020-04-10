@@ -57,8 +57,9 @@ namespace Controllers
         #region Game controls
         public void Pause()
         {
+            // TODO: Throw event that will close all UI elements
             Paused = true;
-            Shop.inst.CloseShop();
+            //Shop.inst.CloseShop();
             Time.timeScale = 0.0f;
             MenuController.inst.Pause();
             //Cursor.lockState = CursorLockMode.Locked;

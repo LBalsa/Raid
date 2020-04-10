@@ -106,7 +106,7 @@ public class PlayerController : MonoBehaviour
 
         //Cursor.lockState = CursorLockMode.Locked;
         stateinfo = anim.GetCurrentAnimatorStateInfo(0);
-        if (CanMove && !GameController.inst.Paused)
+        if (CanMove)// && !GameController.inst.Paused)
         {
             // Movement.
             MoveUpdate();

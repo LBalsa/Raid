@@ -508,6 +508,7 @@ GameObject:
   - component: {fileID: 4860458234176900779}
   - component: {fileID: 9082546571507018417}
   - component: {fileID: 2249565781715586226}
+  - component: {fileID: 7684812725122980169}
   m_Layer: 5
   m_Name: Dialogue
   m_TagString: Untagged
@@ -572,6 +573,18 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+--- !u!114 &7684812725122980169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4747996970116996015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d28a46437fa3a44ebe92a5070373675, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4769494769793621907
 GameObject:
   m_ObjectHideFlags: 0
@@ -701,10 +714,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   calloutPanel: {fileID: 7881660812159248790}
   dialoguePanel: {fileID: 4747996970116996015}
-  calloutText: {fileID: 0}
-  dialogueText: {fileID: 0}
-  buttons: []
-  buttonText: []
 --- !u!1 &4998762217020545656
 GameObject:
   m_ObjectHideFlags: 0

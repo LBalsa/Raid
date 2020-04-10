@@ -4,19 +4,9 @@ using Weapons.WeaponUpgrades;
 
 namespace Characters.Friendlies
 {
-    [SelectionBase]
     public class Magician : Character, IDialogueAction
     {
-        private bool triggered = false;
-        private bool open = false;
-
-        // Dialogue and canvas
-        public Dialogue dialogue;
-        public GameObject dialogueCanvasPrefab;
-        public IDialogueCanvas dialogueCanvas;
-        // Key prompt.
-        public GameObject keyPrompt;
-
+        [Header("Weapon Upgrades")]
         private int weaponUpgradeIndex;
         public WeaponUpgradeGroup weaponUpgradeGroup;
 
@@ -30,42 +20,36 @@ namespace Characters.Friendlies
 
         private void Update()
         {
-            if (triggered)
+            if (isTriggered)
             {
                 // Open dialogue.
-                if (!open && (Input.GetKeyDown(KeyCode.E) || (Input.GetButtonDown("Square"))))
+                if (!isBusy && (Input.GetKeyDown(KeyCode.E) || (Input.GetButtonDown("Square"))))
                 {
-                    open = true;
-
-                    // Disable callout and floating icon.
-                    keyPrompt.SetActive(false);
-                    dialogueCanvas.ToggleCallout(false);
-                    dialogueCanvas.ToggleDialogue(true);
-                    dialogue.StartDialogue(dialogueCanvas, this);
-
-                    // Prevent player movement and handover control to UI.
-                    PlayerController.inst.CanMove = false;
-                    //PlayerController.inst.CanBeAttacked = false;
+                    StartInteraction();
                 }
 
-                if (open && Input.GetKeyDown(KeyCode.Q))
+                if (isBusy && Input.GetKeyDown(KeyCode.Q))
                 {
-                    Close();
+                    CloseCanvas();
                 }
             }
         }
 
-        private void OpenCanvas()
+        void StartInteraction()
         {
-            if (dialogueCanvas == null)
-            {
-                var dialogueCanvasPos = transform.position;
-                dialogueCanvasPos.y += 2.2f;
+            isBusy = true;
 
-                dialogueCanvas = Instantiate(dialogueCanvasPrefab, dialogueCanvasPos, Quaternion.identity, this.transform).GetComponent<IDialogueCanvas>();
-                dialogueCanvas.Dialogue = dialogue;
-            }
+            // Disable callout and floating icon.
+            keyPrompt.SetActive(false);
+            dialogueCanvas.ToggleCallout(false);
+            dialogueCanvas.ToggleDialogue(true);
+            dialogue.StartDialogue(dialogueCanvas, this);
+
+            // Prevent player movement and handover control to UI.
+            PlayerController.inst.CanMove = false;
+            //PlayerController.inst.CanBeAttacked = false;
         }
+
 
         public void PerformAction(int actionIndex)
         {
@@ -76,38 +60,8 @@ namespace Characters.Friendlies
                 case 3: break;
                 case 10: PlayerController.inst.mainWeapon.Upgrade(weaponUpgradeGroup.Upgrades[weaponUpgradeIndex]); break;
                 default:
-                    Close();
+                    CloseCanvas();
                     break;
-            }
-        }
-
-        private void Close()
-        {
-            open = false;
-            PlayerController.inst.CanMove = true;
-            keyPrompt.SetActive(false);
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.tag == "Player")
-            {
-                OpenCanvas();
-                dialogueCanvas.ToggleCallout(true);
-                triggered = true;
-                keyPrompt.SetActive(true);
-            }
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            if (other.tag == "Player")
-            {
-                Close();
-                open = false;
-                triggered = false;
-                dialogueCanvas.ToggleCallout(false);
-                keyPrompt.SetActive(false);
             }
         }
     }
