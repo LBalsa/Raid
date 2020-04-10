@@ -17,6 +17,7 @@ namespace UserInterfaces.Dialogues
         public void StartDialogue(IDialogueCanvas dialogueCanvas, IDialogueAction dialogueAction)
         {
             DialogueCanvas = dialogueCanvas;
+            dialogueCanvas.ToggleCallout(false);
             DialogueCanvas.ToggleDialogue(true);
 
             currentEntry = firstEntry;
