@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Characters.Player;
+using UnityEngine;
 using Weapons;
 
 namespace Characters.Enemies
@@ -25,14 +26,14 @@ namespace Characters.Enemies
 
             // Hide hand axe;
             axe.SetActive(false);
-            
+
             // Instantiate & setup throwing axe.
             GameObject b = Instantiate(throwingWeapon, enemyArm.transform.position,enemyArm.transform.rotation);
             b.GetComponent<MainWeapon>().SetUp(false, true, stats.damage);
             //b.GetComponent<Rigidbody>().AddForce((target.transform.position - enemyArm.transform.position) * projSpeed);
             b.GetComponent<Rigidbody>().AddTorque(b.transform.forward * -500);
             b.GetComponent<MainWeapon>().Throw();
-            b.transform.LookAt(target);                     
+            b.transform.LookAt(target);
 
             // Throw axe by setting its initial velocity.
             b.GetComponent<Rigidbody>().velocity = CalculateThrowVector(b.transform.position, target);

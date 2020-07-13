@@ -1,6 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using Characters.Player;
 using Skills;
+using UnityEngine;
+using UnityEngine.UI;
+
 public class Ship : MonoBehaviour
 {
 

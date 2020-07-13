@@ -1,5 +1,6 @@
 ﻿// Source: https://forum.unity.com/threads/complete-camera-collision-detection-third-person-games.347233/
 
+using Characters.Player;
 using UnityEngine;
 namespace Utility
 {

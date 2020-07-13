@@ -1,207 +1,214 @@
-﻿using UnityEngine;
+﻿using Controllers;
+using SpecialEffects.Structures;
+using UnityEngine;
 using UnityEngine.UI;
 using Weapons;
-using Controllers;
-using SpecialEffects.Structures;
 
-public class HealthManager : MonoBehaviour, IDestructable
+namespace Characters.Player
 {
-    public static HealthManager inst;
-
-    public bool IsAlive { get; private set; } = true;
-    public bool HasBread { get; private set; } = false;
-
-    public int Money { get; set; } = 0;
-
-    public float playerHealth;
-    public float playerMaxHealth;
-
-
-    public Sprite[] healthimages;
-    public GameObject weaponPickupTooltip;
-    public Image healthbar;
-    public Text gold;
-    private Animator anim;
-    private AudioSource audioSource;
-    private PlayerFXStructure fx;
-
-    private void Awake()
+    public class HealthManager : MonoBehaviour, IDestructable
     {
-        inst = this;
-    }
+        public static HealthManager inst;
 
-    private void Start()
-    {
-        anim = GetComponent<Animator>();
-        audioSource = GetComponent<AudioSource>();
-        gold.text = "0";
+        public bool IsAlive { get; private set; } = true;
+        public bool HasBread { get; private set; } = false;
 
-        fx = PlayerController.inst.fx;
-    }
+        public int Money { get; set; } = 0;
 
-    // Pick up objects.
-    private void OnTriggerEnter(Collider other)
-    {
-        // Money is added to...money.
-        if (other.gameObject.tag == "Silver")
+        public float playerHealth;
+        public float playerMaxHealth;
+
+
+        public Sprite[] healthimages;
+        public GameObject weaponPickupTooltip;
+        public Image healthbar;
+        public Text gold;
+        private Animator anim;
+        private AudioSource audioSource;
+        private PlayerFXStructure fx;
+
+        private void Awake()
         {
-            fx.Play(audioSource, fx.sfx_coin);
-            Money++;
-            gold.text = Money.ToString();
-            Destroy(other.gameObject);
-        }
-        else if (other.gameObject.tag == "Gold")
-        {
-            fx.Play(audioSource, fx.sfx_coin);
-            Money += 5;
-            gold.text = Money.ToString();
-            Destroy(other.gameObject);
+            inst = this;
         }
 
-        // Food heals.
-        else if (other.gameObject.tag == "Food" && playerHealth < playerMaxHealth)
+        private void Start()
         {
-            Heal(1);
-            Destroy(other.gameObject);
+            anim = GetComponent<Animator>();
+            audioSource = GetComponent<AudioSource>();
+            gold.text = "0";
+
+            fx = PlayerController.inst.fx;
         }
 
-        // TODO: move this to weapon object
-        // Weapons should make a tooltip come up.
-        if (other.GetComponent<MainWeapon>())
+        // Pick up objects.
+        private void OnTriggerEnter(Collider other)
         {
-            //Vector3 x = new Vector3(0,1,0);
-            //weaponPickupTooltip.transform.position = other.transform.position + x;
-            //weaponPickupTooltip.SetActive(true);
-        }
-    }
+            // Money is added to...money.
+            if (other.gameObject.tag == "Silver")
+            {
+                fx.Play(audioSource, fx.sfx_coin);
+                Money++;
+                gold.text = Money.ToString();
+                Destroy(other.gameObject);
+            }
+            else if (other.gameObject.tag == "Gold")
+            {
+                fx.Play(audioSource, fx.sfx_coin);
+                Money += 5;
+                gold.text = Money.ToString();
+                Destroy(other.gameObject);
+            }
 
-    private void OnTriggerExit(Collider other)
-    {
-        // Closes weapon pickup tooltip.
-        if (other.GetComponent<MainWeapon>())
+            // Food heals.
+            else if (other.gameObject.tag == "Food" && playerHealth < playerMaxHealth)
+            {
+                Heal(1);
+                Destroy(other.gameObject);
+            }
+
+            // TODO: move this to weapon object
+            // Weapons should make a tooltip come up.
+            if (other.GetComponent<MainWeapon>())
+            {
+                //Vector3 x = new Vector3(0,1,0);
+                //weaponPickupTooltip.transform.position = other.transform.position + x;
+                //weaponPickupTooltip.SetActive(true);
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
         {
-            //weaponPickupTooltip.SetActive(false);
+            // Closes weapon pickup tooltip.
+            if (other.GetComponent<MainWeapon>())
+            {
+                //weaponPickupTooltip.SetActive(false);
+            }
         }
-    }
 
-    private void Update()
-    {
-        if (IsAlive && PlayerController.inst.CanMove)// && !GameController.inst.Paused)
+        private void Update()
         {
-            // Do something fun.
+            if (IsAlive && PlayerController.inst.CanMove)// && !GameController.inst.Paused)
+            {
+                // Do something fun.
 
-            // Updates health bar.
-            Changehealthbar(playerHealth);
+                // Updates health bar.
+                //Changehealthbar(playerHealth);
+            }
         }
-    }
 
-    // Damage from other sources. N/A
-    public void TakeDamage(float damage)
-    {
-        return;
-        /*
-        if (playerHealth > 0)
-        {
-            playerHealth -= damage;
-
-        }
-        else if (playerHealth <= 0)
-        {
-            Death();
-            playerHealth = 0;
-        }
-        */
-    }
-
-    // Damage from enemies.
-    public void TakeDamage(float damage, Collision collision)
-    {
-        if (playerHealth <= 0)
+        // Damage from other sources. N/A
+        public void TakeDamage(float damage)
         {
             return;
+            /*
+            if (playerHealth > 0)
+            {
+                playerHealth -= damage;
+
+            }
+            else if (playerHealth <= 0)
+            {
+                Death();
+                playerHealth = 0;
+            }
+            */
         }
 
-        playerHealth -= damage;
-
-        if (playerHealth > 0)
+        // Damage from enemies.
+        public void TakeDamage(float damage, Collision collision)
         {
-            Instantiate(fx.vfx_hurt, collision.contacts[0].point, Quaternion.identity);
-            TakeDamageEffects();
+            if (playerHealth <= 0)
+            {
+                return;
+            }
+
+            playerHealth -= damage;
+
+            if (playerHealth > 0)
+            {
+                Instantiate(fx.vfx_hurt, collision.contacts[0].point, Quaternion.identity);
+                TakeDamageEffects();
+            }
+            else if (playerHealth <= 0)
+            {
+                Death();
+                playerHealth = 0;
+
+            }
+            Changehealthbar(playerHealth);
         }
-        else if (playerHealth <= 0)
-        {
-            Death();
-            playerHealth = 0;
 
+        private void TakeDamageEffects()
+        {
+            fx.sfx_hurt.Play(audioSource);
+            anim.SetTrigger("hit");
+            Invoke("ResetTriggers", 0.2f);
         }
-    }
 
-    private void TakeDamageEffects()
-    {
-        fx.sfx_hurt.Play(audioSource);
-        anim.SetTrigger("hit");
-        Invoke("ResetTriggers", 0.2f);
-    }
-
-    public void HealthUpgrade()
-    {
-        playerMaxHealth += 2;
-        playerHealth = playerMaxHealth;
-    }
-
-    public void Heal(int healAmout)
-    {
-        playerHealth += healAmout;
-
-        if (playerHealth > playerMaxHealth)
+        public void HealthUpgrade()
         {
+            playerMaxHealth += 2;
             playerHealth = playerMaxHealth;
+            Changehealthbar(playerHealth);
         }
-    }
 
-    public void BuyBread()
-    {
-        HasBread = true;
-    }
+        public void Heal(int healAmout)
+        {
+            playerHealth += healAmout;
 
-    //private void ThrowItem(GameObject obj)
-    //{
-    //    if (obj.GetComponent<MainWeapon>())
-    //    {
-    //        obj.GetComponent<MainWeapon>().Drop();
-    //        PlayerController.inst.mainWeapon = null;
-    //    }
-    //    else
-    //    {
-    //        obj.transform.parent = null;
-    //        obj.GetComponent<Rigidbody>().useGravity = true;
-    //    }
-    //}
+            if (playerHealth > playerMaxHealth)
+            {
+                playerHealth = playerMaxHealth;
+            }
 
-    private void Changehealthbar(float playerhealth)
-    {
-        // Convert player health into healthbar sprite range to select from.
-        float healthInRange  = playerHealth *  ((float)healthimages.Length-1) / playerMaxHealth;
-        healthbar.sprite = healthimages[Mathf.RoundToInt(healthInRange)];
-    }
+            Changehealthbar(playerHealth);
+        }
 
-    private void Death()
-    {
-        IsAlive = false;
-        anim.SetTrigger("Dead");
-        Invoke("ResetTriggers", 0.2f);
-        PlayerController.inst.CanMove = false;
-        GameController.inst.GameOver();
+        public void BuyBread()
+        {
+            HasBread = true;
+        }
 
-        Instantiate(fx.vfx_despawn, transform.position, Quaternion.identity);
+        //private void ThrowItem(GameObject obj)
+        //{
+        //    if (obj.GetComponent<MainWeapon>())
+        //    {
+        //        obj.GetComponent<MainWeapon>().Drop();
+        //        PlayerController.inst.mainWeapon = null;
+        //    }
+        //    else
+        //    {
+        //        obj.transform.parent = null;
+        //        obj.GetComponent<Rigidbody>().useGravity = true;
+        //    }
+        //}
 
-    }
+        private void Changehealthbar(float playerhealth)
+        {
+            // Convert player health into healthbar sprite range to select from.
+            float healthInRange  = playerHealth *  ((float)healthimages.Length-1) / playerMaxHealth;
+            healthbar.sprite = healthimages[Mathf.RoundToInt(healthInRange)];
+        }
+
+        private void Death()
+        {
+            IsAlive = false;
+            anim.SetTrigger("Dead");
+            Invoke("ResetTriggers", 0.2f);
+            PlayerController.inst.CanMove = false;
+            GameController.inst.GameOver();
+
+            Instantiate(fx.vfx_despawn, transform.position, Quaternion.identity);
+
+        }
 
 
-    private void ResetTriggers()
-    {
-        //anim.ResetTrigger("Dead");
-        anim.ResetTrigger("hit");
+        private void ResetTriggers()
+        {
+            //anim.ResetTrigger("Dead");
+            anim.ResetTrigger("hit");
 
+        }
     }
 }

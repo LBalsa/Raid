@@ -1,4 +1,4 @@
-﻿using Characters.Friendlies;
+﻿using Characters.Player;
 using UnityEngine;
 
 namespace Controllers

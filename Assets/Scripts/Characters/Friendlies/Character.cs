@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using Characters.Player;
+using UnityEngine;
 using UnityEngine.AI;
-using UserInterfaces.Dialogues;
+using UserInterfaces.Dialoguing;
 using Utility;
 
 namespace Characters
 {
+    public enum CharacterFaction { Ally, Neutral, Enemy }
     #region RequireComponent
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(AudioSource))]
@@ -17,8 +19,7 @@ namespace Characters
     [SelectionBase]
     public class Character : MonoBehaviour, IDialogueAction
     {
-        public enum CharacterFaction { Ally, Neutral, Enemy }
-        protected CharacterFaction characterFaction = CharacterFaction.Neutral;
+        public CharacterFaction characterFaction = CharacterFaction.Neutral;
         [SerializeField]
         protected CharacterStats stats;
 

@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using UserInterfaces.Dialogues;
+﻿using Characters.Player;
+using UnityEngine;
+using UserInterfaces.Dialoguing;
 using Weapons.WeaponUpgrades;
 
 namespace Characters.Friendlies
