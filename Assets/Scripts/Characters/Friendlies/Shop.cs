@@ -14,24 +14,30 @@ namespace Characters.Friendlies
         public AudioClip fail;
         public GameObject shopCanvas;
 
-        protected override void StartInteraction()
+        public override void StartInteraction()
         {
-            isBusy = true;
-            shopCanvas.SetActive(true);
-            Time.timeScale = 0f;
-            Cursor.lockState = CursorLockMode.None;
+            if (!isBusy)
+            {
+                isBusy = true;
+                shopCanvas.SetActive(true);
+                Time.timeScale = 0f;
+                Cursor.lockState = CursorLockMode.None;
 
-            PlaySFX(success);
+                PlaySFX(success);
+            }
         }
 
         public override void EndInteraction()
         {
-            isBusy = false;
-            shopCanvas.SetActive(false);
-            Time.timeScale = 1f;
-            Cursor.lockState = CursorLockMode.Locked;
+            if (isBusy)
+            {
+                isBusy = false;
+                shopCanvas.SetActive(false);
+                Time.timeScale = 1f;
+                Cursor.lockState = CursorLockMode.Locked;
 
-            PlaySFX(success);
+                PlaySFX(success);
+            }
         }
 
         // Check if player has enough money.

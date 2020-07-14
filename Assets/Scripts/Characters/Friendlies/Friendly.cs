@@ -2,10 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Friendly : MonoBehaviour
+namespace Characters.Friendlies
 {
-    // Start is called before the first frame update
-    void Start()
+public class Friendly : MonoBehaviour, IInteractable
+{
+        public void StartInteraction()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void EndInteraction()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        // Start is called before the first frame update
+        void Start()
     {
         
     }
@@ -15,4 +27,5 @@ public class Friendly : MonoBehaviour
     {
         
     }
+}
 }

@@ -20,7 +20,8 @@ namespace Characters.Player
 
         public new GameObject camera;
         public Button pause;
-
+        private IInteractable availableInteractable;
+        private bool isInteracting = false;
         [Header("Weapons")]
         public GameObject weaponPrefab; // Default weapon prefab.
         public GameObject weaponSocket; // To attach weapons.
@@ -119,6 +120,7 @@ namespace Characters.Player
                 // Handles picking up and dropping of weapons.
                 WeaponHandler();
 
+                InteractionUpdate();
                 //// Pause game on Q.
                 //if (Input.GetKeyDown(KeyCode.Q) || (Input.GetButton("Start")))
                 //{
@@ -340,6 +342,23 @@ namespace Characters.Player
             }
         }
 
+        private void InteractionUpdate()
+        {
+            if (availableInteractable != null)
+            {
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    availableInteractable.StartInteraction();
+                    isInteracting = true;
+                }
+                if (Input.GetKeyDown(KeyCode.Q) && isInteracting)
+                {
+                    availableInteractable.EndInteraction();
+                    isInteracting = false;
+                }
+            }
+        }
+
         private void JumpUpdate()
         {
             // Jump.
@@ -462,7 +481,7 @@ namespace Characters.Player
             var character = other.gameObject.GetComponent<Character>();
             if (character && (character.characterFaction == CharacterFaction.Ally || character.characterFaction == CharacterFaction.Neutral))
             {
-
+                availableInteractable = other.GetComponent<IInteractable>();
                 //OpenCanvas(true, Callout);
                 //isTriggered = true;
                 //ToggleKeyPrompt(true);
@@ -498,6 +517,15 @@ namespace Characters.Player
                     Debug.Log("Player has picked up " + other);
                     //weaponPickupTooltip.SetActive(false);
                 }
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            var interactable = other.GetComponent<IInteractable>();
+            if (interactable == availableInteractable)
+            {
+                availableInteractable = null;
             }
         }
     }

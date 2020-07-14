@@ -17,7 +17,7 @@ namespace Characters
     #endregion
 
     [SelectionBase]
-    public class Character : MonoBehaviour, IDialogueAction
+    public class Character : MonoBehaviour, IDialogueAction, IInteractable
     {
         public CharacterFaction characterFaction = CharacterFaction.Neutral;
         [SerializeField]
@@ -58,23 +58,11 @@ namespace Characters
 
         private void Update()
         {
-            if (isTriggered)
-            {
-                // Open dialogue.
-                if (!isBusy && (Input.GetKeyDown(KeyCode.E) || (Input.GetButtonDown("Square"))))
-                {
-                    StartInteraction();
-                }
-                else if (isBusy && Input.GetKeyDown(KeyCode.Q))
-                {
-                    EndInteraction();
-                }
-            }
         }
 
-        protected virtual void StartInteraction()
+        public virtual void StartInteraction()
         {
-            if (dialogue != null)
+            if (!isBusy && dialogue != null)
             {
                 isBusy = true;
                 ToggleKeyPrompt(false);
@@ -88,7 +76,10 @@ namespace Characters
 
         public virtual void EndInteraction()
         {
-            CloseCanvas();
+            if (isBusy)
+            {
+                CloseCanvas();
+            }
         }
 
         public virtual void PerformAction(int actionIndex)
@@ -150,6 +141,5 @@ namespace Characters
                 ToggleKeyPrompt(false);
             }
         }
-
     }
 }
