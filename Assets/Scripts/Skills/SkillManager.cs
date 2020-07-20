@@ -3,13 +3,13 @@ using Skills;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Ship : MonoBehaviour
+public class SkillManager : MonoBehaviour
 {
 
-    public static Ship inst = null;
+    public static SkillManager inst = null;
 
     [System.Serializable]
-    public class SkillElement
+    public class SkillSlot
     {
         public Skill skill;
         [ReadOnly]
@@ -18,7 +18,7 @@ public class Ship : MonoBehaviour
         public Text coolDownText;
     }
 
-    public SkillElement[] skills;
+    public SkillSlot[] skills;
     public AudioClip skillReady;
     public AudioClip error;
     private AudioSource aus;
@@ -32,7 +32,7 @@ public class Ship : MonoBehaviour
         // Initialise skill cooldowns.
         if (skills != null && skills.Length > 0)
         {
-            foreach (SkillElement element in skills)
+            foreach (SkillSlot element in skills)
             {
                 element.remainingCooldown = element.skill.cooldown;
             }
@@ -81,7 +81,7 @@ public class Ship : MonoBehaviour
 
     private void Cooldown()
     {
-        foreach (SkillElement element in skills)
+        foreach (SkillSlot element in skills)
         {
             if (element.remainingCooldown > 0)
             {
@@ -97,7 +97,7 @@ public class Ship : MonoBehaviour
         }
     }
 
-    private void Use(SkillElement element)
+    private void Use(SkillSlot element)
     {
         element.skill.Trigger(PlayerController.inst.gameObject);
         element.remainingCooldown = element.skill.cooldown;
