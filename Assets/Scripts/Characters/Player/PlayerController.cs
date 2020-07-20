@@ -8,7 +8,7 @@ using Weapons;
 namespace Characters.Player
 {
     [SelectionBase]
-    public class PlayerController : MonoBehaviour
+    public partial class PlayerController : MonoBehaviour, IAttackable
     {
         public static PlayerController inst;
 
@@ -22,6 +22,7 @@ namespace Characters.Player
         public Button pause;
         private IInteractable availableInteractable;
         private bool isInteracting = false;
+
         [Header("Weapons")]
         public GameObject weaponPrefab; // Default weapon prefab.
         public GameObject weaponSocket; // To attach weapons.
@@ -29,18 +30,20 @@ namespace Characters.Player
         public Weapon fist; // For when there is no weapon equipped.
         public Weapon foot; // For kicking.
         public float playerDamage = 2f;
-        private float holdingTimer = 0;
+        private float holdingTimer = 0f;
         private bool hasWeapon = true;
+
         #region Combat variables.
+
+        public event Attack OnAttack;
+        public event Death OnDeath;
 
         private bool canCombo = false;
         public bool InCombat { get; private set; } = false;
         public bool IsMoving { get; private set; } = false;
-        public bool IsRotating { get; set; } = false;
+        public bool IsRotating { get; private set; } = false;
         public bool CanMove { get; set; } = true;
-        public bool CanBeAttacked { get; set; } = false;
-        public bool Attacking { get; set; } = false;
-        private bool isUnderAttack = false;
+        public bool CanBeAttacked { get; private set; } = true;
 
         #endregion
 
@@ -71,6 +74,7 @@ namespace Characters.Player
 
         public PlayerFXStructure fx;
         private AudioSource audioSource;
+
         // Use this for initialization
         private void Awake()
         {
@@ -105,7 +109,7 @@ namespace Characters.Player
         private void Update()
         {
             // Return if player is dead.
-            if (!HealthManager.inst.IsAlive) { return; }
+            if (!HealthManager.inst.IsAlive) { enabled = false; OnDeath?.Invoke(true); }
 
             //Cursor.lockState = CursorLockMode.Locked;
             stateinfo = anim.GetCurrentAnimatorStateInfo(0);
@@ -131,13 +135,6 @@ namespace Characters.Player
             {
                 anim.SetFloat("Forward", 0, 1f, Time.deltaTime * 10);
                 anim.SetFloat("Strafe", 0, 1f, Time.deltaTime * 10);
-            }
-
-            // Reset whether the player can be attacked.
-            if (CanBeAttacked && !isUnderAttack)
-            {
-                isUnderAttack = true;
-                Invoke("ResetCanBeAttacked", 5f);
             }
         }
 
@@ -283,7 +280,7 @@ namespace Characters.Player
             {
                 if ((Input.GetButton("Triangle")) || (Input.GetKey(KeyCode.Mouse1)))
                 {
-                    Attacking = true; // Enemy block purposes.
+                    OnAttack?.Invoke();
                     anim.SetTrigger("HeavyAttacks");
                     Invoke("ResetTriggers", 0.01f);
                 }
@@ -293,7 +290,7 @@ namespace Characters.Player
             {
                 if ((Input.GetButton("Square")) || (Input.GetKey(KeyCode.Mouse0)))
                 {
-                    Attacking = true; // Enemy block purposes.
+                    OnAttack?.Invoke();
                     anim.SetTrigger("HeavyAttacks");
                     Invoke("ResetTriggers", 0.01f);
                 }
@@ -303,7 +300,7 @@ namespace Characters.Player
             {
                 if ((Input.GetButton("Square")) || (Input.GetKey(KeyCode.Mouse1)))
                 {
-                    Attacking = true; // Enemy block purposes.
+                    OnAttack?.Invoke();
                     anim.SetTrigger("HeavyAttacks");
                     Invoke("ResetTriggers", 0.01f);
                 }
@@ -314,8 +311,7 @@ namespace Characters.Player
             {
                 if ((Input.GetButton("Square")) || (Input.GetKey(KeyCode.Mouse0)))
                 {
-                    Debug.Log("ATTACK");
-                    Attacking = true; // Enemy block purposes.
+                    OnAttack?.Invoke();
                     anim.SetTrigger("LightAttacks");
                     Invoke("ResetTriggers", 0.01f);
                 }
@@ -325,7 +321,7 @@ namespace Characters.Player
             {
                 if ((Input.GetButton("Triangle")) || (Input.GetKey(KeyCode.Mouse1)))
                 {
-                    Attacking = true; // Enemy block purposes.
+                    OnAttack?.Invoke();
                     anim.SetTrigger("LightAttacks");
                     Invoke("ResetTriggers", 0.01f);
                 }
@@ -335,7 +331,7 @@ namespace Characters.Player
             {
                 if ((Input.GetButton("Square")) || (Input.GetKey(KeyCode.Mouse0)))
                 {
-                    Attacking = true; // Enemy block purposes.
+                    OnAttack?.Invoke();
                     anim.SetTrigger("LightAttacks");
                     Invoke("ResetTriggers", 0.01f);
                 }
@@ -350,11 +346,13 @@ namespace Characters.Player
                 {
                     availableInteractable.StartInteraction();
                     isInteracting = true;
+                    CanMove = false;
                 }
                 if (Input.GetKeyDown(KeyCode.Q) && isInteracting)
                 {
                     availableInteractable.EndInteraction();
                     isInteracting = false;
+                    CanMove = true;
                 }
             }
         }
@@ -412,13 +410,19 @@ namespace Characters.Player
 
         }
 
+        public void OnAttacked()
+        {
+            CanBeAttacked = false;
+            Invoke("ResetCanBeAttacked", 5f);
+        }
+
         // Resets animation triggers.
         private void ResetTriggers()
         {
             anim.ResetTrigger("LightAttacks");
             anim.ResetTrigger("HeavyAttacks");
             anim.ResetTrigger("Jump");
-            Attacking = false;
+            //Attacking = false;
         }
 
         #region Animation Events
@@ -471,8 +475,7 @@ namespace Characters.Player
 
         private void ResetCanBeAttacked()
         {
-            CanBeAttacked = false;
-            isUnderAttack = false;
+            CanBeAttacked = true;
         }
 
         //*******Enemy AI**************

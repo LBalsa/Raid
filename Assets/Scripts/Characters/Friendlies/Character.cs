@@ -1,5 +1,4 @@
-﻿using Characters.Player;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 using UserInterfaces.Dialoguing;
 using Utility;
@@ -67,10 +66,6 @@ namespace Characters
                 isBusy = true;
                 ToggleKeyPrompt(false);
                 dialogue.StartDialogue(dialogueCanvas, this);
-
-                // Prevent player movement and handover control to UI.
-                PlayerController.inst.CanMove = false;
-                //PlayerController.inst.CanBeAttacked = false;
             }
         }
 
@@ -114,7 +109,6 @@ namespace Characters
                 dialogueCanvas.ToggleCallout(false);
             }
             isBusy = false;
-            PlayerController.inst.CanMove = true;
         }
 
         protected virtual void ToggleKeyPrompt(bool state)

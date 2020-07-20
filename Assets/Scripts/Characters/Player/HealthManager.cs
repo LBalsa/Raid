@@ -187,7 +187,7 @@ namespace Characters.Player
         private void Changehealthbar(float playerhealth)
         {
             // Convert player health into healthbar sprite range to select from.
-            float healthInRange  = playerHealth *  ((float)healthimages.Length-1) / playerMaxHealth;
+            float healthInRange = playerHealth * ((float)healthimages.Length - 1) / playerMaxHealth;
             healthbar.sprite = healthimages[Mathf.RoundToInt(healthInRange)];
         }
 

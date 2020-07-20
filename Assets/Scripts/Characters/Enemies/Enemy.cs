@@ -1,5 +1,4 @@
-﻿using Characters.Player;
-using Items;
+﻿using Items;
 using SpecialEffects;
 using SpecialEffects.Structures;
 using System.Collections;
@@ -25,7 +24,7 @@ namespace Characters.Enemies
         public Transform weaponSlot;
         #endregion
 
-        protected PlayerController target;
+        protected IAttackable target;
 
         #region Components
         protected Weapon fist;
@@ -47,7 +46,7 @@ namespace Characters.Enemies
         protected AIState state;
         protected AIState stateCtrl;
 
-        protected bool playerDeath= false;
+        protected bool targetKilled = false;
         protected bool beenHit = false;
         protected bool isBlocking = false;
         protected bool isRetreating = false;
@@ -57,10 +56,12 @@ namespace Characters.Enemies
 
 
         // Use this for initialization
-        private void Start()
+        protected override void Start()
         {
             Initialise();
             InitialiseWeapons();
+            target.OnAttack += Attacked;
+            target.OnDeath += TargetKilled;
         }
 
         protected override void Initialise()
@@ -69,7 +70,7 @@ namespace Characters.Enemies
             base.Initialise();
 
             health = stats.maxHealth;
-            target = PlayerController.inst;
+            target = target = GameObject.FindGameObjectWithTag("Player").GetComponent<IAttackable>();
             state = AIState.idle;
             blockTimer = 0;
 
@@ -118,11 +119,11 @@ namespace Characters.Enemies
         protected virtual void Update()
         {
             // Check if player is still alive.
-            if (HealthManager.inst.IsAlive)
+            if (!targetKilled)
             {
                 // Set player as target.
-                if (target) { distance = Vector3.Distance(transform.position, new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z)); }
-                else { target = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>(); }
+                if (target != null) { distance = Vector3.Distance(transform.position, new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z)); }
+                else { target = GameObject.FindGameObjectWithTag("Player").GetComponent<IAttackable>(); }
 
                 if (state != AIState.dead)
                 {
@@ -162,11 +163,6 @@ namespace Characters.Enemies
                 {
                     lookAt.lookAtTargetPosition = nav.steeringTarget + transform.forward;
                 }
-            }
-            else if (!playerDeath)
-            {
-                PlayerKilled();
-                playerDeath = true;
             }
         }
 
@@ -265,8 +261,8 @@ namespace Characters.Enemies
                 attackTimer = stats.attackCooldown;
             }
 
-            // Check for player attacks.
-            CheckForAttacks();
+            // Checking for player attacks moved to event.
+
             Block();
 
             // If path behind is blocked.
@@ -335,9 +331,9 @@ namespace Characters.Enemies
             }
         }
 
-        protected void CheckForAttacks()
+        protected void Attacked()
         {
-            if (target.Attacking && !blocking && Random.Range(0, 100) <= (int)health)
+            if (!blocking && Random.Range(0, 100) <= (int)health)
             {
                 BlockStart();
             }
@@ -350,19 +346,19 @@ namespace Characters.Enemies
             //float direction = Vector3.Dot(dir, transform.forward);
 
             // If player is already under attack, skip attack and taunt.
-            if (target.GetComponent<PlayerController>().CanBeAttacked && stateCtrl != AIState.attacking)
+            if (!target.CanBeAttacked && stateCtrl != AIState.attacking)
             {
                 //if (Random.Range(0, 20) == 1) { anim.SetTrigger("Taunt"); }
-                attackTimer = 2;
+                attackTimer = 1;
                 ChangeState(AIState.circling);
                 return;
             }
             // State entry control.
             ChangeState(AIState.attacking);
+            target.OnAttacked();
 
             // Move closer to player & allow it to be attacked.
             nav.stoppingDistance = stats.maxdistance / 2;
-            target.GetComponent<PlayerController>().CanBeAttacked = true;
 
             // Go back to moving if player moves away.
             if (distance > stats.maxdistance * 2)
@@ -478,7 +474,6 @@ namespace Characters.Enemies
 
         protected virtual void AttackEnd()
         {
-            target.GetComponent<PlayerController>().CanBeAttacked = false;
             nav.stoppingDistance = stats.maxdistance;
             if (mainWeapon) { mainWeapon.Disable(); }
             else if (fist) { fist.Disable(); }
@@ -496,7 +491,6 @@ namespace Characters.Enemies
 
         private void DisableRightArm()
         {
-            target.GetComponent<PlayerController>().CanBeAttacked = false;
             nav.stoppingDistance = stats.maxdistance;
             if (mainWeapon) { mainWeapon.Disable(); }
             else if (fist) { fist.Disable(); }
@@ -575,11 +569,6 @@ namespace Characters.Enemies
         {
             health -= dmg;
 
-            if (state == AIState.attacking || stateCtrl == AIState.attacking)
-            {
-                target.GetComponent<PlayerController>().CanBeAttacked = false;
-            }
-
             if (health <= 0)
             {
                 StartCoroutine("Die");
@@ -617,6 +606,10 @@ namespace Characters.Enemies
         // Death procedure.
         protected IEnumerator Die()
         {
+            // Unsubscribe from events
+            target.OnAttack -= Attacked;
+            target.OnDeath -= TargetKilled;
+
             // Drop weapon.
             if (mainWeapon) { mainWeapon.Drop(); }
 
@@ -650,10 +643,19 @@ namespace Characters.Enemies
             Destroy(this.gameObject);
         }
 
-        public void PlayerKilled()
+        public void TargetKilled(bool gameover)
         {
-            anim.SetInteger("VictoryDance", Random.Range(0, 4));
-            anim.SetTrigger("Victory");
+            if (gameover)
+            {
+                targetKilled = true;
+
+                anim.SetInteger("VictoryDance", Random.Range(0, 4));
+                anim.SetTrigger("Victory");
+            }
+            else
+            {
+                // Look for new target
+            }
         }
 
         /// <summary>
