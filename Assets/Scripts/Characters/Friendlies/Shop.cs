@@ -13,17 +13,21 @@ namespace Characters.Friendlies
         public AudioClip success;
         public AudioClip fail;
         public GameObject shopCanvas;
-
-        public override void StartInteraction()
+        public InventoryManager client;
+        public override void StartInteraction(GameObject other)
         {
             if (!isBusy)
             {
-                isBusy = true;
-                shopCanvas.SetActive(true);
-                Time.timeScale = 0f;
-                Cursor.lockState = CursorLockMode.None;
+                client = other?.GetComponent<InventoryManager>();
+                if (client != null)
+                {
+                    isBusy = true;
+                    shopCanvas.SetActive(true);
+                    Time.timeScale = 0f;
+                    Cursor.lockState = CursorLockMode.None;
 
-                PlaySFX(success);
+                    PlaySFX(success);
+                }
             }
         }
 
@@ -31,6 +35,8 @@ namespace Characters.Friendlies
         {
             if (isBusy)
             {
+                RaiseEndInteraction();
+                client = null;
                 isBusy = false;
                 shopCanvas.SetActive(false);
                 Time.timeScale = 1f;
@@ -41,13 +47,12 @@ namespace Characters.Friendlies
         }
 
         // Check if player has enough money.
-        private bool CheckGold(int gold)
+        private bool CollectMoney(int gold)
         {
-            if (HealthManager.inst.Money >= gold)
+            if (client.Money >= gold)
             {
                 // Update money;
-                HealthManager.inst.Money -= gold;
-                HealthManager.inst.gold.text = HealthManager.inst.Money.ToString();
+                client.Money -= gold;
 
                 // Play coin sfx.
                 PlaySFX(success);
@@ -63,25 +68,25 @@ namespace Characters.Friendlies
 
         public void BuyFish()
         {
-            if (CheckGold(1))
+            if (CollectMoney(1))
             {
-                HealthManager.inst.Heal(1);
+                client.InstaHealth(1);
             }
         }
 
         public void BuyBread()
         {
-            if (CheckGold(1))
+            if (CollectMoney(1))
             {
-                HealthManager.inst.BuyBread();
+                //HealthManager.inst.BuyBread();
             }
         }
 
         public void BuyHeart()
         {
-            if (CheckGold(5))
+            if (CollectMoney(5))
             {
-                HealthManager.inst.HealthUpgrade();
+                client.HealthUpgrade(2);
             }
         }
 

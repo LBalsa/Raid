@@ -8,29 +8,21 @@ namespace Characters.Player
 {
     public class HealthManager : MonoBehaviour, IDestructable
     {
-        public static HealthManager inst;
+        public Death OnDeath;
 
         public bool IsAlive { get; private set; } = true;
-        public bool HasBread { get; private set; } = false;
-
-        public int Money { get; set; } = 0;
-
-        public float playerHealth;
-        public float playerMaxHealth;
+        [SerializeField]
+        private float playerHealth;
+        [SerializeField]
+        private float playerMaxHealth;
 
 
         public Sprite[] healthimages;
-        public GameObject weaponPickupTooltip;
         public Image healthbar;
         public Text gold;
         private Animator anim;
         private AudioSource audioSource;
         private PlayerFXStructure fx;
-
-        private void Awake()
-        {
-            inst = this;
-        }
 
         private void Start()
         {
@@ -44,56 +36,11 @@ namespace Characters.Player
         // Pick up objects.
         private void OnTriggerEnter(Collider other)
         {
-            // Money is added to...money.
-            if (other.gameObject.tag == "Silver")
-            {
-                fx.Play(audioSource, fx.sfx_coin);
-                Money++;
-                gold.text = Money.ToString();
-                Destroy(other.gameObject);
-            }
-            else if (other.gameObject.tag == "Gold")
-            {
-                fx.Play(audioSource, fx.sfx_coin);
-                Money += 5;
-                gold.text = Money.ToString();
-                Destroy(other.gameObject);
-            }
-
             // Food heals.
-            else if (other.gameObject.tag == "Food" && playerHealth < playerMaxHealth)
+             if (other.gameObject.tag == "Food" && playerHealth < playerMaxHealth)
             {
                 Heal(1);
                 Destroy(other.gameObject);
-            }
-
-            // TODO: move this to weapon object
-            // Weapons should make a tooltip come up.
-            if (other.GetComponent<MainWeapon>())
-            {
-                //Vector3 x = new Vector3(0,1,0);
-                //weaponPickupTooltip.transform.position = other.transform.position + x;
-                //weaponPickupTooltip.SetActive(true);
-            }
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            // Closes weapon pickup tooltip.
-            if (other.GetComponent<MainWeapon>())
-            {
-                //weaponPickupTooltip.SetActive(false);
-            }
-        }
-
-        private void Update()
-        {
-            if (IsAlive && PlayerController.inst.CanMove)// && !GameController.inst.Paused)
-            {
-                // Do something fun.
-
-                // Updates health bar.
-                //Changehealthbar(playerHealth);
             }
         }
 
@@ -132,11 +79,11 @@ namespace Characters.Player
             }
             else if (playerHealth <= 0)
             {
-                Death();
                 playerHealth = 0;
-
+                OnDeath?.Invoke(true);
+                Death();
             }
-            Changehealthbar(playerHealth);
+            UpdateHealthbar(playerHealth);
         }
 
         private void TakeDamageEffects()
@@ -146,11 +93,11 @@ namespace Characters.Player
             Invoke("ResetTriggers", 0.2f);
         }
 
-        public void HealthUpgrade()
+        public void HealthUpgrade(int health)
         {
-            playerMaxHealth += 2;
+            playerMaxHealth += health;
             playerHealth = playerMaxHealth;
-            Changehealthbar(playerHealth);
+            UpdateHealthbar(playerHealth);
         }
 
         public void Heal(int healAmout)
@@ -162,35 +109,17 @@ namespace Characters.Player
                 playerHealth = playerMaxHealth;
             }
 
-            Changehealthbar(playerHealth);
+            UpdateHealthbar(playerHealth);
         }
 
-        public void BuyBread()
-        {
-            HasBread = true;
-        }
-
-        //private void ThrowItem(GameObject obj)
-        //{
-        //    if (obj.GetComponent<MainWeapon>())
-        //    {
-        //        obj.GetComponent<MainWeapon>().Drop();
-        //        PlayerController.inst.mainWeapon = null;
-        //    }
-        //    else
-        //    {
-        //        obj.transform.parent = null;
-        //        obj.GetComponent<Rigidbody>().useGravity = true;
-        //    }
-        //}
-
-        private void Changehealthbar(float playerhealth)
+        private void UpdateHealthbar(float playerhealth)
         {
             // Convert player health into healthbar sprite range to select from.
             float healthInRange = playerHealth * ((float)healthimages.Length - 1) / playerMaxHealth;
             healthbar.sprite = healthimages[Mathf.RoundToInt(healthInRange)];
         }
 
+        // Move to player controller
         private void Death()
         {
             IsAlive = false;
@@ -202,7 +131,6 @@ namespace Characters.Player
             Instantiate(fx.vfx_despawn, transform.position, Quaternion.identity);
 
         }
-
 
         private void ResetTriggers()
         {

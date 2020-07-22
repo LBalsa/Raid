@@ -7,7 +7,7 @@ using Weapons;
 
 namespace Characters.Enemies
 {
-    public class Enemy : Character, IDestructable
+    public class Enemy : Character
     {
         #region Stats
         [Header("Stats")]

@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class SkillManager : MonoBehaviour
 {
-
     public static SkillManager inst = null;
 
     [System.Serializable]
@@ -37,13 +36,12 @@ public class SkillManager : MonoBehaviour
                 element.remainingCooldown = element.skill.cooldown;
             }
         }
+
+        GetComponent<HealthManager>().OnDeath += delegate { enabled = false; };
     }
 
     private void Update()
     {
-        // Return if player is dead.
-        if (!HealthManager.inst.IsAlive) { return; }
-
         if (skills != null && skills.Length > 0)//!GameController.inst.paused)
         {
             KeyPresses();

@@ -16,7 +16,7 @@ namespace Characters
     #endregion
 
     [SelectionBase]
-    public class Character : MonoBehaviour, IDialogueAction, IInteractable
+    public class Character : MonoBehaviour, IDialogueAction, IInteractable, IDestructable
     {
         public CharacterFaction characterFaction = CharacterFaction.Neutral;
         [SerializeField]
@@ -41,6 +41,9 @@ namespace Characters
         protected bool isBusy;
         protected bool isTriggered;
 
+        public event EndInteraction OnEndInteraction;
+        protected virtual void RaiseEndInteraction() => OnEndInteraction?.Invoke();
+
         protected virtual void Start()
         {
             Initialise();
@@ -55,11 +58,7 @@ namespace Characters
             rb = GetComponent<Rigidbody>();
         }
 
-        private void Update()
-        {
-        }
-
-        public virtual void StartInteraction()
+        public virtual void StartInteraction(GameObject other)
         {
             if (!isBusy && dialogue != null)
             {
@@ -73,16 +72,18 @@ namespace Characters
         {
             if (isBusy)
             {
+                RaiseEndInteraction();
                 CloseCanvas();
             }
         }
 
         public virtual void PerformAction(int actionIndex)
         {
+            Debug.Log("Perform action " + actionIndex);
             switch (actionIndex)
             {
                 default:
-                    CloseCanvas();
+                    EndInteraction();
                     break;
             }
         }
@@ -134,6 +135,16 @@ namespace Characters
                 isTriggered = false;
                 ToggleKeyPrompt(false);
             }
+        }
+
+        public virtual void TakeDamage(float damage)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public virtual void TakeDamage(float damage, Collision collision)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

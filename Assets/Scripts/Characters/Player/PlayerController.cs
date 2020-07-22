@@ -1,5 +1,4 @@
-﻿using Controllers;
-using SpecialEffects.Structures;
+﻿using SpecialEffects.Structures;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +7,10 @@ using Weapons;
 namespace Characters.Player
 {
     [SelectionBase]
+    [RequireComponent(typeof(HealthManager))]
+    [RequireComponent(typeof(InteractionManager))]
+    [RequireComponent(typeof(InventoryManager))]
+    [RequireComponent(typeof(SkillManager))]
     public partial class PlayerController : MonoBehaviour, IAttackable
     {
         public static PlayerController inst;
@@ -20,8 +23,6 @@ namespace Characters.Player
 
         public new GameObject camera;
         public Button pause;
-        private IInteractable availableInteractable;
-        private bool isInteracting = false;
 
         [Header("Weapons")]
         public GameObject weaponPrefab; // Default weapon prefab.
@@ -104,13 +105,14 @@ namespace Characters.Player
 
             Cursor.lockState = CursorLockMode.Locked;
 
+            GetComponent<HealthManager>().OnDeath += delegate { enabled = false; OnDeath?.Invoke(true); };
+            GetComponent<InteractionManager>().OnBlockingInteraction += delegate { CanMove = false; };
+            GetComponent<InteractionManager>().OnFreeInteraction += delegate { CanMove = true; };
+            GetComponent<InteractionManager>().OnPickupWeapon += PickupWeapon;
         }
 
         private void Update()
         {
-            // Return if player is dead.
-            if (!HealthManager.inst.IsAlive) { enabled = false; OnDeath?.Invoke(true); }
-
             //Cursor.lockState = CursorLockMode.Locked;
             stateinfo = anim.GetCurrentAnimatorStateInfo(0);
             if (CanMove)// && !GameController.inst.Paused)
@@ -124,7 +126,6 @@ namespace Characters.Player
                 // Handles picking up and dropping of weapons.
                 WeaponHandler();
 
-                InteractionUpdate();
                 //// Pause game on Q.
                 //if (Input.GetKeyDown(KeyCode.Q) || (Input.GetButton("Start")))
                 //{
@@ -338,31 +339,12 @@ namespace Characters.Player
             }
         }
 
-        private void InteractionUpdate()
-        {
-            if (availableInteractable != null)
-            {
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    availableInteractable.StartInteraction();
-                    isInteracting = true;
-                    CanMove = false;
-                }
-                if (Input.GetKeyDown(KeyCode.Q) && isInteracting)
-                {
-                    availableInteractable.EndInteraction();
-                    isInteracting = false;
-                    CanMove = true;
-                }
-            }
-        }
-
         private void JumpUpdate()
         {
             // Jump.
             if (stateinfo.fullPathHash == state_Grounded || stateinfo.fullPathHash == state_Combat)
             {
-                if ((Input.GetButton("X")) || (Input.GetKey(KeyCode.Space)))
+                if ((Input.GetButton("X")) || (Input.GetKeyDown(KeyCode.Space)))
                 {
                     anim.SetTrigger("Jump");
                     Invoke("ResetTriggers", 0.05f);
@@ -403,8 +385,8 @@ namespace Characters.Player
                     hasWeapon = false; // Enable player to pick up another weapon.
                     anim.speed = 1; // Reset animator speed.
 
-                    PlayerController.inst.mainWeapon.Drop();
-                    PlayerController.inst.mainWeapon = null;
+                    mainWeapon.Drop();
+                    mainWeapon = null;
                 }
             }
 
@@ -478,58 +460,28 @@ namespace Characters.Player
             CanBeAttacked = true;
         }
 
-        //*******Enemy AI**************
-        private void OnTriggerEnter(Collider other)
+        public void PickupWeapon(MainWeapon weapon)
         {
-            var character = other.gameObject.GetComponent<Character>();
-            if (character && (character.characterFaction == CharacterFaction.Ally || character.characterFaction == CharacterFaction.Neutral))
+            if (hasWeapon)
             {
-                availableInteractable = other.GetComponent<IInteractable>();
-                //OpenCanvas(true, Callout);
-                //isTriggered = true;
-                //ToggleKeyPrompt(true);
+                mainWeapon.Drop();
             }
-            else if (other.GetComponent<IAnimal>() != null)
-            {
-                other.GetComponent<IAnimal>().Aproach(gameObject);
-            }
-        }
 
-        private void OnTriggerStay(Collider other)
-        {
-            if (!HealthManager.inst.IsAlive || GameController.inst.Paused || !CanMove) { return; }
-            // Allow player to pick up a weapon if he collides 
-            // with one and does not have one.
-            if (other.GetComponent<MainWeapon>())
-            {
-                if ((!hasWeapon) && (Input.GetKeyDown(KeyCode.R) || (Input.GetButton("Circle"))))
-                {
-                    // Prevent player from picking up more weapons.
-                    hasWeapon = true;
-                    holdingTimer = 1f;
+            // Prevent player from picking up more weapons.
+            hasWeapon = true;
+            holdingTimer = 1f;
 
-                    // Pick up weapon and assign it as the weapon.
-                    other.GetComponent<MainWeapon>().Pickup(weaponSocket.transform, true, playerDamage);
-                    PlayerController.inst.mainWeapon = other.GetComponent<MainWeapon>();
+            // Pick up weapon and assign it as the weapon.
+            weapon.Pickup(weaponSocket.transform, true, playerDamage);
+            mainWeapon = weapon;
 
-                    // Asjust animation speed to weapon weight.
-                    anim.speed = PlayerController.inst.mainWeapon.speed;
+            // Asjust animation speed to weapon weight.
+            anim.speed = weapon.speed;
 
-                    fx.Play(audioSource, fx.sfx_pickupWeapon);
+            fx.Play(audioSource, fx.sfx_pickupWeapon);
 
-                    Debug.Log("Player has picked up " + other);
-                    //weaponPickupTooltip.SetActive(false);
-                }
-            }
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            var interactable = other.GetComponent<IInteractable>();
-            if (interactable == availableInteractable)
-            {
-                availableInteractable = null;
-            }
+            Debug.Log("Player has picked up " + weapon);
+            //weaponPickupTooltip.SetActive(false);
         }
     }
 }
