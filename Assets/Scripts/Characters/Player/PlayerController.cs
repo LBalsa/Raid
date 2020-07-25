@@ -1,4 +1,5 @@
-﻿using SpecialEffects.Structures;
+﻿using Controllers;
+using SpecialEffects.Structures;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -104,11 +105,16 @@ namespace Characters.Player
             }
 
             Cursor.lockState = CursorLockMode.Locked;
+        }
 
+        private void Start()
+        {
             GetComponent<HealthManager>().OnDeath += delegate { enabled = false; OnDeath?.Invoke(true); };
-            GetComponent<InteractionManager>().OnBlockingInteraction += delegate { CanMove = false; };
-            GetComponent<InteractionManager>().OnFreeInteraction += delegate { CanMove = true; };
+            GetComponent<InteractionManager>().OnBlockingInteraction += delegate { enabled = false; };
+            GetComponent<InteractionManager>().OnFreeInteraction += delegate { enabled = true; };
             GetComponent<InteractionManager>().OnPickupWeapon += PickupWeapon;
+            GameController.inst.OnPause += delegate { enabled = false; ; };
+            GameController.inst.OnUnPause += delegate { enabled = true; };
         }
 
         private void Update()

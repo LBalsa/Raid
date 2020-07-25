@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Controllers;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Controllers;
 
 public class MenuController : MonoBehaviour
 {
@@ -21,6 +21,7 @@ public class MenuController : MonoBehaviour
     public Dropdown resolutionDropdown;
     public Dropdown qualityDropdown;
     public Toggle fullSreenToggle;
+
     private void Awake()
     {
         // Singleton pattern.
@@ -43,39 +44,11 @@ public class MenuController : MonoBehaviour
 
     private void Start()
     {
-        // Clear resolution options.
-        resolutionDropdown.ClearOptions();
+        GameController.inst.OnPause += Pause;
+        GameController.inst.OnUnPause += Unpause;
+        GameController.inst.OnGameOver += GameOverMenu;
 
-        // Get available resolutions for current screen.
-        availableResolutions = Screen.resolutions;
-
-        // Convert Resolution array into a string list.
-        List<string> resolutionsList = new List<string>();
-        for (int i = 0; i < availableResolutions.Length; i++)
-        {
-            string resolution = availableResolutions[i].width + " * " + availableResolutions[i].width;
-            resolutionsList.Add(resolution);
-
-            // Check if this is the current resolution and set it in the dropdown.
-            if (availableResolutions[i].width == Screen.currentResolution.width && availableResolutions[i].height == Screen.currentResolution.height)
-            {
-                resolutionDropdown.value = i;
-            }
-        }
-
-        // Add resolutions to dropdown and update shown value;
-        resolutionDropdown.AddOptions(resolutionsList);
-        resolutionDropdown.RefreshShownValue();
-
-        // Select correct quality settings.
-        qualityDropdown.value = QualitySettings.GetQualityLevel();
-        qualityDropdown.RefreshShownValue();
-
-        // Set fullscreen toggle.
-        if (fullSreenToggle)
-        {
-        fullSreenToggle.isOn = Screen.fullScreen;
-        }
+        SetupOptionsMenu();
     }
 
     #region Menu
@@ -127,12 +100,26 @@ public class MenuController : MonoBehaviour
 
     private void SelectButton(GameObject menu)
     {
-        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(menu.GetComponentInChildren<UnityEngine.UI.Button>().gameObject);
-
+        UnityEngine.EventSystems.EventSystem.current.
+            SetSelectedGameObject(menu.GetComponentInChildren<UnityEngine.UI.Button>().gameObject);
     }
     #endregion
 
     #region Gameover Menu
+
+    private void GameOverMenu(GameOverArgs args)
+    {
+        gameOverMenu?.SetActive(true);
+        gameStats.text = "Time played: " + args.GameTime
+            + "\nGold collected: " + args.EnemyDeathCount
+            + "\nEnemies beat: " + args.EnemyDeathCount;
+
+        // Load game credits and animate them upwards.
+        gameOverMenu.GetComponentInChildren<UnityEngine.UI.Text>().text = System.IO.File.ReadAllText(Application.dataPath + "/Resources/GameCredits.txt");
+        //gameOverScreen.GetComponent<Animator>().SetTrigger("Play");
+
+        Invoke(nameof(MainMenu), 300);
+    }
 
     public void StartOver()
     {
@@ -146,7 +133,7 @@ public class MenuController : MonoBehaviour
 
     public void SetResolution(int resolutionIndex)
     {
-        Resolution resolution =availableResolutions[resolutionIndex];
+        Resolution resolution = availableResolutions[resolutionIndex];
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 
@@ -182,6 +169,43 @@ public class MenuController : MonoBehaviour
         optionsMenu.SetActive(false);
         instructionsMenu.SetActive(false);
         pauseMenu.SetActive(true);
+    }
+
+    private void SetupOptionsMenu()
+    {
+        // Clear resolution options.
+        resolutionDropdown.ClearOptions();
+
+        // Get available resolutions for current screen.
+        availableResolutions = Screen.resolutions;
+
+        // Convert Resolution array into a string list.
+        List<string> resolutionsList = new List<string>();
+        for (int i = 0; i < availableResolutions.Length; i++)
+        {
+            string resolution = availableResolutions[i].width + " * " + availableResolutions[i].width;
+            resolutionsList.Add(resolution);
+
+            // Check if this is the current resolution and set it in the dropdown.
+            if (availableResolutions[i].width == Screen.currentResolution.width && availableResolutions[i].height == Screen.currentResolution.height)
+            {
+                resolutionDropdown.value = i;
+            }
+        }
+
+        // Add resolutions to dropdown and update shown value;
+        resolutionDropdown.AddOptions(resolutionsList);
+        resolutionDropdown.RefreshShownValue();
+
+        // Select correct quality settings.
+        qualityDropdown.value = QualitySettings.GetQualityLevel();
+        qualityDropdown.RefreshShownValue();
+
+        // Set fullscreen toggle.
+        if (fullSreenToggle)
+        {
+            fullSreenToggle.isOn = Screen.fullScreen;
+        }
     }
 
     #endregion
