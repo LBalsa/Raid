@@ -11,7 +11,7 @@
 //   send@johannesdeml.com
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
-
+#pragma warning disable CS0618
 namespace Supyrb.EditorTools
 {
     using UnityEditor;

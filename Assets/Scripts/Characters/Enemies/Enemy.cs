@@ -502,7 +502,7 @@ namespace Characters.Enemies
         }
 
         // Damage from other objects.
-        public void TakeDamage(float dmg)
+        public override void TakeDamage(float dmg)
         {
             // Disable weapon collider to stop attack.
             if (mainWeapon) { mainWeapon.Disable(); }
@@ -518,7 +518,7 @@ namespace Characters.Enemies
         }
 
         // Damage from player.
-        public void TakeDamage(float damage, Collision collision)
+        public override void TakeDamage(float damage, Collision collision)
         {
             // TODO: This should be a list similar to the apply damage method
             // Return if already been hit in last half second;

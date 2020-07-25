@@ -25,7 +25,7 @@ namespace Controllers
 
         // Game stats
         public float GameTimer { get; private set; } = 0.0f;
-        private int EnemyDeathCount { get; set; } = 0;
+        public int EnemyDeathCount { get; set; } = 0;
         public int EnemySpawnCount { get; set; } = 0;
         #endregion
 

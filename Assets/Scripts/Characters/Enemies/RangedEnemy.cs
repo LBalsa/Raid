@@ -14,13 +14,13 @@ namespace Characters.Enemies
         [Range(20f,70f)]
         public float projectileAngle = 45f;
 
-        private void Start()
+        protected override void Start()
         {
             axe.SetActive(true);
             Initialise();
         }
 
-        public void Fire()
+        private void Fire()
         {
             Vector3 target = PlayerController.inst.transform.position;
 
@@ -28,18 +28,18 @@ namespace Characters.Enemies
             axe.SetActive(false);
 
             // Instantiate & setup throwing axe.
-            GameObject b = Instantiate(throwingWeapon, enemyArm.transform.position,enemyArm.transform.rotation);
-            b.GetComponent<MainWeapon>().SetUp(false, true, stats.damage);
+            GameObject weapon = Instantiate(throwingWeapon, enemyArm.transform.position,enemyArm.transform.rotation);
+            weapon.GetComponent<MainWeapon>().SetUp(false, true, stats.damage);
             //b.GetComponent<Rigidbody>().AddForce((target.transform.position - enemyArm.transform.position) * projSpeed);
-            b.GetComponent<Rigidbody>().AddTorque(b.transform.forward * -500);
-            b.GetComponent<MainWeapon>().Throw();
-            b.transform.LookAt(target);
+            weapon.GetComponent<Rigidbody>().AddTorque(weapon.transform.forward * -500);
+            weapon.GetComponent<MainWeapon>().Throw();
+            weapon.transform.LookAt(target);
 
             // Throw axe by setting its initial velocity.
-            b.GetComponent<Rigidbody>().velocity = CalculateThrowVector(b.transform.position, target);
+            weapon.GetComponent<Rigidbody>().velocity = CalculateThrowVector(weapon.transform.position, target);
 
             // Make hand axe reapear in hand.
-            Invoke("ActivateAxe", 2.0f);
+            Invoke(nameof(ActivateAxe), 2.0f);
         }
 
         private Vector3 CalculateThrowVector(Vector3 from, Vector3 to)
@@ -82,7 +82,6 @@ namespace Characters.Enemies
             axe.SetActive(true);
         }
 
-        // Attacking
         protected override void Attacking()
         {
             Vector3 dir = (target.transform.position - transform.position).normalized;
