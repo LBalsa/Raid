@@ -110,8 +110,8 @@ namespace Characters.Player
         private void Start()
         {
             GetComponent<HealthManager>().OnDeath += delegate { enabled = false; OnDeath?.Invoke(true); };
-            GetComponent<InteractionManager>().OnBlockingInteraction += delegate { enabled = false; };
-            GetComponent<InteractionManager>().OnFreeInteraction += delegate { enabled = true; };
+            GetComponent<InteractionManager>().OnBlockingInteraction += delegate { CanMove = false; };
+            GetComponent<InteractionManager>().OnFreeInteraction += delegate { CanMove = true; };
             GetComponent<InteractionManager>().OnPickupWeapon += PickupWeapon;
             GameController.inst.OnPause += delegate { enabled = false; ; };
             GameController.inst.OnUnPause += delegate { enabled = true; };
@@ -140,8 +140,8 @@ namespace Characters.Player
             }
             else
             {
-                anim.SetFloat("Forward", 0, 1f, Time.deltaTime * 10);
-                anim.SetFloat("Strafe", 0, 1f, Time.deltaTime * 10);
+                anim.SetFloat("Forward", 0, 0f, Time.deltaTime * 10);
+                anim.SetFloat("Strafe", 0, 0f, Time.deltaTime * 10);
             }
         }
 
