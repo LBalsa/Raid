@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace Characters.Animals
 {
-    public class RatSwarm : MonoBehaviour, IAnimal
+    public class RatSwarm : Animal
     {
         public GameObject effect;
         private bool on = false;
 
         public Rat[] rats;
 
-        public void Aproach(GameObject other)
+        public override void Aproach(GameObject other)
         {
 
             if (!on)
@@ -29,11 +29,6 @@ namespace Characters.Animals
                 //GetComponent<Animator>().SetBool("Walk", true);
                 //StartCoroutine(MoveObject(transform.position, dir, 2));
             }
-        }
-
-        public void Hit(GameObject other)
-        {
-            throw new System.NotImplementedException();
         }
 
         private IEnumerator MoveObject(Vector3 startPos, Vector3 endPos, float time)

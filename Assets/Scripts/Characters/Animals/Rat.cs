@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace Characters.Animals
 {
-    public class Rat : MonoBehaviour, IAnimal
+    public class Rat : Animal
     {
         [SerializeField]
         public GameObject effect = null;
         bool on = false;
 
-        public void Aproach(GameObject other)
+        public override void Aproach(GameObject other)
         {
             if (!on)
             {
@@ -24,11 +24,6 @@ namespace Characters.Animals
                 GetComponent<Animator>().SetBool("Walk", true);
                 StartCoroutine(MoveObject(transform.position, dir, 2));
             }
-        }
-
-        public void Hit(GameObject other)
-        {
-            throw new System.NotImplementedException();
         }
 
         IEnumerator MoveObject(Vector3 startPos, Vector3 endPos, float time)

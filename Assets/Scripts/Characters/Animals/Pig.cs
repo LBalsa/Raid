@@ -1,22 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Characters.Animals
 {
-    public class Pig : MonoBehaviour
+    public class Pig : Animal
     {
-
-        // Use this for initialization
-        void Start()
+        public override void Aproach(GameObject other)
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
         }
     }
 }

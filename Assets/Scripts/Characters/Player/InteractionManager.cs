@@ -67,10 +67,6 @@ namespace Characters.Player
                 //isTriggered = true;
                 //ToggleKeyPrompt(true);
             }
-            else if (other.GetComponent<IAnimal>() != null)
-            {
-                other.GetComponent<IAnimal>().Aproach(gameObject);
-            }
         }
 
         private void OnTriggerStay(Collider other)

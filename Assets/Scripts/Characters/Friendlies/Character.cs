@@ -16,7 +16,7 @@ namespace Characters
     #endregion
 
     [SelectionBase]
-    public class Character : MonoBehaviour, IDialogueAction, IInteractable, IDestructable
+    public class Character : MonoBehaviour, IDialogueAction, IInteractable, IDestructable, ICharacter
     {
         public CharacterFaction characterFaction = CharacterFaction.Neutral;
         [SerializeField]

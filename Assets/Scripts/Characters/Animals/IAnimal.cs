@@ -5,5 +5,4 @@ using UnityEngine;
 public interface IAnimal
 {
     void Aproach(GameObject other);
-    void Hit(GameObject other);
 }
