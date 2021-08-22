@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Characters;
+using UnityEngine;
 using Weapons.WeaponUpgrades;
 
 namespace Weapons
@@ -9,13 +10,13 @@ namespace Weapons
         public IWeaponUpgrade weaponUpgradeReference;
         public GameObject passiveEffectReference;
 
-        public void Pickup(Transform parentHand, bool isPlayerFriendly, float dmg)
+        public void Pickup(Transform parentHand, CharacterFaction faction, float dmg)
         {
             // Disable trigger.
             GetComponent<SphereCollider>().enabled = false;
 
             // Setup.
-            SetUp(isPlayerFriendly, false, dmg);
+            SetUp(faction, false, dmg);
 
             // Set parent and position.
             pos = new Vector3(0, 0, 0);
@@ -30,7 +31,7 @@ namespace Weapons
         {
             // Set as universal weapon.
             armed = false;
-            SetLayer(Layers.Weapon);
+            SetLayer(WeaponLayers.Weapon);
 
             // Enable collider.
             Enable();

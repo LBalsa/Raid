@@ -486,7 +486,6 @@ namespace Characters.Player
 
             fx.Play(audioSource, fx.sfx_pickupWeapon);
 
-            Debug.Log("Player has picked up " + weapon);
             //weaponPickupTooltip.SetActive(false);
         }
     }

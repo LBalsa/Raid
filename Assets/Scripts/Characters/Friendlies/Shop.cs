@@ -23,7 +23,7 @@ namespace Characters.Friendlies
                 {
                     isBusy = true;
                     shopCanvas.SetActive(true);
-                    Time.timeScale = 0f;
+                    //Time.timeScale = 0f;
                     Cursor.lockState = CursorLockMode.None;
 
                     PlaySFX(success);
@@ -39,7 +39,7 @@ namespace Characters.Friendlies
                 client = null;
                 isBusy = false;
                 shopCanvas.SetActive(false);
-                Time.timeScale = 1f;
+                //Time.timeScale = 1f;
                 Cursor.lockState = CursorLockMode.Locked;
 
                 PlaySFX(success);

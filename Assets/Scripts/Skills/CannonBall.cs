@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using SpecialEffects;
 using UnityEngine;
-using SpecialEffects;
+using Weapons;
 
 namespace Skills
 {
@@ -11,15 +10,15 @@ namespace Skills
 
     public class CannonBall : MonoBehaviour
     {
-        float damage;
-        float radius;
-        VariableVolumePitch cannonSFX;
-        VariableVolumePitch fallSFX;
-        VariableVolumePitch explosionSFX;
-        GameObject explosionVFX;
+        private float damage;
+        private float radius;
+        private VariableVolumePitch cannonSFX;
+        private VariableVolumePitch fallSFX;
+        private VariableVolumePitch explosionSFX;
+        private GameObject explosionVFX;
 
         // Use this for initialization
-        void Start()
+        private void Start()
         {
             GetComponentInChildren<MeshRenderer>().enabled = false;
             Rigidbody rb = GetComponent<Rigidbody>();
@@ -39,10 +38,25 @@ namespace Skills
             // Visual effects.
             explosionVFX = explosionVfx;
 
+            SetLayer(WeaponLayers.PlayerWeapon, true);
+
             // Inter shot elay
             Invoke("Fire", delay / 2);
             Invoke("Fall", 2 + delay);
 
+        }
+
+        public void SetLayer(WeaponLayers weaponLayer, bool includeChildren = true)
+        {
+            gameObject.layer = (int)weaponLayer;
+            if (includeChildren)
+            {
+                foreach (Transform trans in gameObject.transform.GetComponentsInChildren<Transform>(true))
+                {
+                    trans.gameObject.layer = (int)weaponLayer;
+                }
+            }
+            tag = weaponLayer.ToString();
         }
 
         public void Fire()
@@ -63,33 +77,8 @@ namespace Skills
             explosionSFX.Play(GetComponent<AudioSource>());
             Instantiate(explosionVFX, transform.position, Quaternion.identity);
 
-            // Deal extra damage if enemy was hit directly.
-            if (collision.gameObject.CompareTag("Enemy"))
-            {
-                collision.gameObject.GetComponent<IDestructable>().TakeDamage(damage);
-            }
-
-            // Search for enemeis in collision radius.
-            Collider[] objectsInRange = Physics.OverlapSphere(transform.position, radius);
-            foreach (Collider col in objectsInRange)
-            {
-                IDestructable destructable = col.GetComponent<IDestructable>();
-                if (destructable != null && col.name != "Player")
-                {
-                    // Linear damage falloff.
-                    float proximity = (transform.position - col.gameObject.transform.position).magnitude;
-                    float actualDamage = 1.5f - (proximity / radius);
-
-                    //Debug.Log("Cannonball damage: " + damage * actualDamage);
-                    if (damage > 0)
-                    {
-                        destructable.TakeDamage(damage * actualDamage);
-                    }
-                }
-            }
-
-
-
+            DealDirectDamage(collision);
+            DealRadialDamage();
 
             // Leave mark if hit static objects;
             if (!collision.gameObject.CompareTag("Enemy") && !collision.gameObject.CompareTag("Player"))
@@ -101,7 +90,35 @@ namespace Skills
             Invoke("DestroyThis", 2);
         }
 
-        void DestroyThis()
+        // TODO : Replace with layer to avoid unintended collisions
+        private void DealDirectDamage(Collision collision)
+        {
+            //if (collision.gameObject.CompareTag("Enemy"))
+            //{
+                collision.gameObject.GetComponent<IDestructable>().TakeDamage(damage);
+            //}
+        }
+
+        private void DealRadialDamage()
+        {
+            Collider[] objectsInRange = Physics.OverlapSphere(transform.position, radius);
+            foreach (Collider col in objectsInRange)
+            {
+                var destructible = col.GetComponent<IDestructable>();
+                if (destructible != null && col.name != "Player")
+                {
+                    var proximity = (transform.position - col.gameObject.transform.position).magnitude;
+                    var falloffDamage = 1.5f - (proximity / radius);
+
+                    if (damage > 0)
+                    {
+                        destructible.TakeDamage(damage * falloffDamage);
+                    }
+                }
+            }
+        }
+
+        private void DestroyThis()
         {
             Destroy(this.gameObject);
         }

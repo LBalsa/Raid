@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Characters;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Weapons
@@ -10,7 +11,6 @@ namespace Weapons
         protected bool throwable = false;
         [Tooltip("Base weapon damage.")]
         public float baseDamage;
-        public float yielderDamage;
         [Tooltip("Total weapon+wielder damage.")]
         [HideInInspector]
         public float damage;
@@ -19,27 +19,53 @@ namespace Weapons
         protected Rigidbody rb;
         protected Vector3 pos = new Vector3(0, 0, 0);
         protected Vector3 rotation = new Vector3(0, 0, 0);
-        protected List< GameObject> gameObjectsHit = new List<GameObject>();
+        protected List<GameObject> gameObjectsHit = new List<GameObject>();
 
-        // weapon layers
-        public enum Layers { Weapon = 0, PlayerWeapon = 9, EnemyWeapon = 10 };
 
         // Colliders.
-        protected SphereCollider pickupTrigger;
+        protected SphereCollider pickupTrigger; 
         protected List<Collider> colliders = new List<Collider>();
 
-        public void SetUp(bool isPlayerFriendly, bool isThrowable, float dmg)
+        public void SetUp(CharacterFaction characterFaction, bool isThrowable, float dmg)
         {
-            SetLayer(isPlayerFriendly ? Layers.PlayerWeapon : Layers.EnemyWeapon);
+            WeaponLayers weaponLayer;
+            switch (characterFaction)
+            {
+                case CharacterFaction.Ally: weaponLayer = WeaponLayers.PlayerWeapon; break;
+                case CharacterFaction.Neutral: weaponLayer = WeaponLayers.PlayerWeapon; break;
+                case CharacterFaction.Enemy: weaponLayer = WeaponLayers.EnemyWeapon; break;
+                default: weaponLayer = WeaponLayers.Weapon; break;
+            }
 
+            SetLayer(weaponLayer);
+            SetDamage(dmg);
+            SetupColliders();
+            ConfigureThrowable(isThrowable);
+            armed = true;
+        }
+
+        private void SetDamage(float dmg)
+        {
+            damage = baseDamage + dmg;
+        }
+
+        private void ConfigureThrowable(bool isThrowable)
+        {
             throwable = isThrowable;
 
-            // Arm weapon.
-            damage = baseDamage + dmg;
-            armed = true;
+            if (!rb)
+            {
+                rb = GetComponent<Rigidbody>();
+            }
 
-            // Get and disable colliders.
-            foreach (Collider coll in GetComponentsInChildren<Collider>())
+            rb.useGravity = false;
+            rb.isKinematic = false;
+            rb.constraints = isThrowable ? RigidbodyConstraints.None : RigidbodyConstraints.FreezeAll;
+        }
+
+        private void SetupColliders()
+        {
+            foreach (var coll in GetComponentsInChildren<Collider>())
             {
                 if (!coll.isTrigger)
                 {
@@ -47,30 +73,11 @@ namespace Weapons
                 }
                 coll.enabled = false;
             }
-
-            // Lock rigidbody.
-            if (!rb)
-            {
-                rb = GetComponent<Rigidbody>();
-            }
-            if (isThrowable)
-            {
-                rb.useGravity = false; // No droppy droppy.
-                rb.isKinematic = false; // So it can collide.
-                rb.constraints = RigidbodyConstraints.None;
-            }
-            else
-            {
-                rb.useGravity = false; // No droppy droppy.
-                rb.isKinematic = false; // So it can collide.
-                rb.constraints = RigidbodyConstraints.FreezeAll;  // Constrain all transforms.
-            }
         }
-
 
         public void Enable()
         {
-            ResetPos(); // Glue weapon to hand.
+            ResetPosition(); // Glue weapon to hand.
             foreach (Collider coll in colliders)
             {
                 coll.enabled = true;
@@ -80,8 +87,8 @@ namespace Weapons
         public void Disable()
         {
             gameObjectsHit.Clear();
-            ResetPos(); // Glue weapon to hand.
-            foreach (Collider coll in colliders)
+            ResetPosition();
+            foreach (var coll in colliders)
             {
                 coll.enabled = false;
             }
@@ -89,14 +96,14 @@ namespace Weapons
 
         public void Throw()
         {
-            foreach (Collider coll in colliders)
+            foreach (var coll in colliders)
             {
                 rb.useGravity = true;
                 coll.enabled = true;
             }
         }
 
-        private void ResetPos()
+        private void ResetPosition()
         {
             // Reset weapon position.
             transform.localPosition = pos;
@@ -116,9 +123,9 @@ namespace Weapons
             if (collision.gameObject.GetComponent<IDestructable>() != null && armed)
             {
                 // Prevent double damage by caching already hit objects.
-                foreach (var item in gameObjectsHit)
+                foreach (var hit in gameObjectsHit)
                 {
-                    if (collision.gameObject == item)
+                    if (collision.gameObject == hit)
                     {
                         return false;
                     }
@@ -137,17 +144,17 @@ namespace Weapons
             collision.gameObject.GetComponent<IDestructable>().TakeDamage(damage, collision);
         }
 
-        public void SetLayer(Layers layer, bool includeChildren = true)
+        public void SetLayer(WeaponLayers weaponLayer, bool includeChildren = true)
         {
-            gameObject.layer = (int)layer;
+            gameObject.layer = (int)weaponLayer;
             if (includeChildren)
             {
                 foreach (Transform trans in gameObject.transform.GetComponentsInChildren<Transform>(true))
                 {
-                    trans.gameObject.layer = (int)layer;
+                    trans.gameObject.layer = (int)weaponLayer;
                 }
             }
-            tag = layer.ToString();
+            tag = weaponLayer.ToString();
         }
 
 

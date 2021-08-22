@@ -55,53 +55,57 @@ public class SkillManager : MonoBehaviour
         {
             if (skills[0] != null && skills[0].remainingCooldown <= 0)
             {
-                Use(skills[0]);
+                UseSkill(skills[0]);
             }
-            else { PlaySound(error); }
+            else { SkillNotReady(); }
         }
         if (Input.GetKeyDown(KeyCode.Alpha2) || (Input.GetButton("R1")))
         {
             if (skills[1] != null && skills[1].remainingCooldown <= 0)
             {
-                Use(skills[1]);
+                UseSkill(skills[1]);
             }
-            else { PlaySound(error); }
+            else { SkillNotReady(); }
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             if (skills[2] != null && skills[2].remainingCooldown <= 0)
             {
-                Use(skills[2]);
+                UseSkill(skills[2]);
             }
-            else { PlaySound(error); }
+            else { SkillNotReady(); }
         }
     }
 
     private void Cooldown()
     {
-        foreach (SkillSlot element in skills)
+        foreach (SkillSlot skill in skills)
         {
-            if (element.remainingCooldown > 0)
+            if (skill.remainingCooldown > 0)
             {
-                element.remainingCooldown -= Time.deltaTime;
-                float roundedCd = Mathf.Round(element.remainingCooldown);
-                element.coolDownText.text = roundedCd.ToString();
-                element.load.fillAmount = (element.remainingCooldown / element.skill.cooldown);
+                skill.remainingCooldown -= Time.deltaTime;
+                float roundedCd = Mathf.Round(skill.remainingCooldown);
+                skill.coolDownText.text = roundedCd.ToString();
+                skill.load.fillAmount = (skill.remainingCooldown / skill.skill.cooldown);
             }
             else
             {
-                element.load.color = Color.white;
+                skill.load.color = Color.white;
             }
         }
     }
 
-    private void Use(SkillSlot element)
+    private void UseSkill(SkillSlot skillSlot)
     {
-        element.skill.Trigger(PlayerController.inst.gameObject);
-        element.remainingCooldown = element.skill.cooldown;
-        element.load.color = Color.yellow;
+        skillSlot.skill.Trigger(PlayerController.inst.gameObject);
+        skillSlot.remainingCooldown = skillSlot.skill.cooldown;
+        skillSlot.load.color = Color.yellow;
     }
 
+    private void SkillNotReady()
+    {
+        PlaySound(error);
+    }
     private void PlaySound(AudioClip clip)
     {
         aus.clip = clip;
